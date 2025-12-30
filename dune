@@ -1,0 +1,9 @@
+(include_subdirs unqualified)
+
+; (library
+;  (name markdown)
+;  (modules_without_implementation feature))
+
+(executable
+ (name main)
+ (modules_without_implementation feature))
