@@ -3,7 +3,6 @@
 - anchor
 - code_block
 - code_inline
-- compact_list
 - environment
 - footnote
 - headings
@@ -28,10 +27,15 @@
 - math_inline
 - math_display
 - lists
+- compact_list
 
 # FIXES
 
 - bold = ** and italic = _
-- 1. first
-  3. second
-  is parsed in two separate lists
+- Parse
+  ```md
+    1. first
+    3. second
+  ```
+  as two separate lists.
+  

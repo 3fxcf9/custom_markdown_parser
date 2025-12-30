@@ -1,7 +1,9 @@
 open Ast
 open Lexer
 
-type list_type = Ordered | Dash | Star | Plus
+(* Tilde is for compact list (each item is parsed inline) *)
+
+type list_type = Ordered | Dash | Star | Plus | Compact
 type node += ListNode of list_type * int * node list list
 
 let gather_line (tokens : Lexer.token array) (pos : int) :
@@ -28,7 +30,7 @@ let is_list_item (tokens : Lexer.token array) (pos : int) : bool =
     if pos + 1 >= n then false
     else
       match (tokens.(pos), tokens.(pos + 1)) with
-      | Dash, Space | Star, Space | Plus, Space -> true
+      | Dash, Space | Star, Space | Plus, Space | Tilde, Space -> true
       | Text s, Dot when pos + 2 < n && tokens.(pos + 2) = Space -> is_digits s
       | _ -> false
 
@@ -43,7 +45,7 @@ let is_compatible_list_item (tokens : Lexer.token array) (pos : int)
         && tokens.(pos + 1) = Dot
         && tokens.(pos + 2) = Space
         && is_digits s
-    | Dash, Dash | Star, Star | Plus, Plus ->
+    | Dash, Dash | Star, Star | Plus, Plus | Tilde, Tilde ->
         pos + 1 < n && tokens.(pos + 1) = Space
     | _ -> false
 
@@ -108,7 +110,11 @@ let parse_single_item tokens pos open_tok reg =
   in
   let item_tokens = List.rev acc_rev' |> Array.of_list in
   let parsed =
-    if Array.length item_tokens = 0 then [] else Parser.parse reg item_tokens
+    if Array.length item_tokens = 0 then []
+    else
+      match open_tok with
+      | Tilde -> Parser.parse_inlines reg item_tokens
+      | _ -> Parser.parse reg item_tokens
   in
   (parsed, pos_after)
 
@@ -134,6 +140,7 @@ let parse_block tokens pos reg =
       | Dash -> Dash
       | Star -> Star
       | Plus -> Plus
+      | Tilde -> Compact
       | _ -> Dash
     in
     let start_num =
@@ -155,6 +162,7 @@ let render_html reg = function
         | Dash -> " class=\"list-dash\""
         | Star -> " class=\"list-star\""
         | Plus -> " class=\"list-plus\""
+        | Compact -> " class=\"list-compact\""
         | _ -> ""
       in
       let buf = Buffer.create 128 in

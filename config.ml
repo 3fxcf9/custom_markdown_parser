@@ -22,6 +22,8 @@ let build_registry () =
       (module Math_inline);
       (module Math_display);
       (module List_feature);
+      (* IMPORTANT: Must be parsed before List_feature *)
+      (module Compact_list_feature);
     ]
   in
   List.iter (init_feature reg) features;
