@@ -3,7 +3,6 @@
 - anchor
 - code_block
 - code_inline
-- environment
 - footnote
 - headings
 - image
@@ -28,6 +27,7 @@
 - math_display
 - lists
 - compact_list
+- environment
 
 # FIXES
 
@@ -38,4 +38,3 @@
     3. second
   ```
   as two separate lists.
-  

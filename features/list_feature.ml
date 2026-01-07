@@ -6,6 +6,7 @@ open Lexer
 type list_type = Ordered | Dash | Star | Plus | Compact
 type node += ListNode of list_type * int * node list list
 
+(* gather tokens for a single line (including trailing Newline if present) *)
 let gather_line (tokens : Lexer.token array) (pos : int) :
     Lexer.token array * int =
   let n = Array.length tokens in
@@ -89,6 +90,7 @@ let rec collect_indented_lines tokens pos indent_min acc_rev =
             List.fold_left (fun acc t -> t :: acc) acc_rev adjusted_list
           in
           collect_indented_lines tokens (pos + consumed) indent_min acc_rev'
+    | Newline -> collect_indented_lines tokens (pos + 1) indent_min acc_rev
     | _ ->
         (* Not an indented continuation -> stop collecting *)
         (acc_rev, pos)
