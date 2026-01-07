@@ -4,7 +4,6 @@
 - code_block
 - code_inline
 - footnote
-- headings
 - image
 - inline_figure
 - internal_reference
@@ -28,6 +27,7 @@
 - compact_list
 - environment
 - strikethrough
+- headings
 
 # FIXES
 

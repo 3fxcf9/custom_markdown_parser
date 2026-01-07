@@ -27,6 +27,7 @@ let build_registry () =
       (* IMPORTANT: Compact list must be parsed before List_feature *)
       (module Compact_list_feature);
       (module Environment_feature);
+      (module Heading_feature);
     ]
   in
   List.iter (init_feature reg) features;
