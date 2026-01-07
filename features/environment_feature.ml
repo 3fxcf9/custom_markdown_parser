@@ -42,40 +42,6 @@ let append_array_slice_to_rev_list arr start len acc_rev =
   in
   loop start acc_rev
 
-(* let rec collect_indented_lines tokens pos indent_min acc_rev = *)
-(*   let n = Array.length tokens in *)
-(*   if pos >= n then (acc_rev, pos) *)
-(*   else *)
-(*     match tokens.(pos) with *)
-(*     | Indent lvl when lvl >= indent_min -> *)
-(*         let line_arr, consumed = gather_line tokens pos in *)
-(*         if Array.length line_arr = 0 then *)
-(*           collect_indented_lines tokens (pos + consumed) indent_min acc_rev *)
-(*         else *)
-(*           (* adjust leading indent token if present *) *)
-(*           let adjusted_list = *)
-(*             match line_arr.(0) with *)
-(*             | Indent lvl when lvl >= indent_min -> *)
-(*                 let new_lvl = lvl - indent_min in *)
-(*                 if new_lvl > 0 then ( *)
-(*                   let a = Array.copy line_arr in *)
-(*                   a.(0) <- Indent new_lvl; *)
-(*                   Array.to_list a) *)
-(*                 else *)
-(*                   (* drop the indent token *) *)
-(*                   Array.to_list *)
-(*                     (Array.sub line_arr 1 (Array.length line_arr - 1)) *)
-(*             | _ -> Array.to_list line_arr *)
-(*           in *)
-(*           let acc_rev' = *)
-(*             List.fold_left (fun acc t -> t :: acc) acc_rev adjusted_list *)
-(*           in *)
-(*           collect_indented_lines tokens (pos + consumed) indent_min acc_rev' *)
-(*     | Newline -> collect_indented_lines tokens (pos + 1) indent_min acc_rev *)
-(*     | _ -> *)
-(*         (* Not an indented continuation -> stop collecting *) *)
-(*         (acc_rev, pos) *)
-
 (* Detect an env-open line starting at pos.
    Syntax: %Text(type) [rest-of-line-is-title] NEWLINE
    Returns Some (env_short, title_opt, pos_after_open_line) or None.
@@ -147,17 +113,12 @@ let rec collect_indented_lines tokens pos indent_min acc_rev =
         (* Not an indented continuation -> stop collecting *)
         (acc_rev, pos)
 
-let paragraph_stop_condition tokens pos =
-  match parse_env_open_line tokens pos with Some _ -> true | None -> false
-
 let parse_inline _ _ _ = None
 
 let parse_block tokens pos reg =
   match parse_env_open_line tokens pos with
   | None -> None
   | Some (env_name, title_opt, after_open_pos) -> (
-      print_endline env_name;
-      print_endline (match title_opt with Some s -> s | None -> "NONE");
       (* collect content lines (allow blank lines) *)
       let acc_rev = [] in
       let acc_rev', pos_after =

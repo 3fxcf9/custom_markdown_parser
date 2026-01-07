@@ -129,7 +129,6 @@ let rec parse_items tokens pos open_tok reg acc =
     let item_parsed, next_pos = parse_single_item tokens pos open_tok reg in
     parse_items tokens next_pos open_tok reg (item_parsed :: acc)
 
-let paragraph_stop_condition tokens pos = is_list_item tokens pos
 let parse_inline _ _ _ = None
 
 let parse_block tokens pos reg =

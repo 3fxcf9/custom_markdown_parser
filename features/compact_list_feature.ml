@@ -3,11 +3,6 @@ open List_feature
 
 (* Requires list_feature to be enabled *)
 
-let paragraph_stop_condition tokens pos =
-  pos + 1 < Array.length tokens
-  && tokens.(pos) = Tilde
-  && tokens.(pos + 1) = Space
-
 let parse_inline _ _ _ = None
 
 let parse_block tokens pos reg =

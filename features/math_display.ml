@@ -27,9 +27,6 @@ let scan_math_block tokens pos =
         find_close (pos + 2)
     | _ -> None
 
-let paragraph_stop_condition tokens pos =
-  match scan_math_block tokens pos with Some _ -> true | None -> false
-
 let parse_block tokens pos _reg =
   match scan_math_block tokens pos with
   | Some (content, consumed) -> Some (MathDisplayNode content, consumed)

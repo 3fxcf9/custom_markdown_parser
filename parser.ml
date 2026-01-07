@@ -62,7 +62,7 @@ let parse (reg : Registry.t) (tokens : Lexer.token array) : Ast.node list =
             | _ ->
                 if
                   List.exists
-                    (fun cond -> cond tokens !i)
+                    (fun cond -> cond tokens !i reg)
                     reg.paragraph_stop_conditions
                 then ()
                 else (

@@ -2,7 +2,6 @@ open Lexer
 
 type Ast.node += ItalicNode of Ast.node list
 
-let paragraph_stop_condition _ _ = false
 let parse_block _ _ _ = None
 
 let parse_inline tokens pos registry =

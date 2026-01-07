@@ -11,7 +11,6 @@
 - link
 - nbsp
 - sidenote
-- strikethrough
 
 # DOING
 
@@ -28,6 +27,7 @@
 - lists
 - compact_list
 - environment
+- strikethrough
 
 # FIXES
 
@@ -38,3 +38,7 @@
     3. second
   ```
   as two separate lists.
+- Skip math in italic, bold, …
+  ```md
+    text _italic $f_{n}$_
+  ```

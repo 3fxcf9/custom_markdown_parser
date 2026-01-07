@@ -30,9 +30,6 @@ let is_hrule_line tokens pos =
         else if !i < n && tokens.(!i) = Newline then Some (kind, count + 1)
         else None
 
-let paragraph_stop_condition tokens pos =
-  match is_hrule_line tokens pos with Some _ -> true | None -> false
-
 let parse_block tokens pos _reg =
   match is_hrule_line tokens pos with
   | Some (kind, consumed) -> Some (HRuleNode kind, consumed)

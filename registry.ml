@@ -9,7 +9,7 @@ type t = {
 }
 
 and parser_function = Lexer.token array -> int -> t -> (Ast.node * int) option
-and paragraph_stop_condition = Lexer.token array -> int -> bool
+and paragraph_stop_condition = Lexer.token array -> int -> t -> bool
 and renderer_function = t -> node -> string option
 
 (* Renderer.  TODO: Split *)
@@ -40,7 +40,7 @@ let create_registry () : t =
   (* default paragraph stop condition *)
   registry.paragraph_stop_conditions <-
     [
-      (fun tokens pos ->
+      (fun tokens pos _ ->
         if pos + 1 < Array.length tokens then
           match (tokens.(pos), tokens.(pos + 1)) with
           | Newline, Newline -> true
