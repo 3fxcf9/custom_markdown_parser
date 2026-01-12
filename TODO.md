@@ -1,33 +1,36 @@
 # TODO
 
-- anchor
-- code_block
-- code_inline
-- footnote
-- image
-- inline_figure
-- internal_reference
-- link
-- nbsp
-- sidenote
+- `anchor`
+- `code_block`
+- `footnote`
+- `image`
+- `inline_figure`
+- `internal_reference`
+- `link`
+- `nbsp`
+- `sidenote`
 
 # DOING
 
 
 # DONE
 
-- bold
-- italic
-- underline
-- highlight
-- hr
-- math_inline
-- math_display
-- lists
-- compact_list
-- environment
-- strikethrough
-- headings
+## Display
+  - `headings`
+  - `hr`
+  - `lists`
+  - `environment`
+  - `math_display`
+
+## Inline
+  - `math_inline`
+  - `code_inline`
+  - `compact_list`
+  - `bold` (fixed math, code)
+  - `italic` (fixed math, code)
+  - `underline` (fixed math, code)
+  - `highlight` (fixed math, code)
+  - `strikethrough` (fixed math, code)
 
 # FIXES
 
@@ -38,7 +41,3 @@
     3. second
   ```
   as two separate lists.
-- Skip math in italic, bold, …
-  ```md
-    text _italic $f_{n}$_
-  ```

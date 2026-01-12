@@ -21,6 +21,7 @@ let build_registry () =
       (module Highlight_feature);
       (module Strikethrough_feature);
       (module Hrule_feature);
+      (module Code_inline);
       (module Math_inline);
       (module Math_display);
       (module List_feature);
