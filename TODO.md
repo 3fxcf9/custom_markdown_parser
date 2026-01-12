@@ -7,7 +7,6 @@
 - `inline_figure`
 - `internal_reference`
 - `link`
-- `nbsp`
 - `sidenote`
 
 # DOING
@@ -26,6 +25,7 @@
   - `math_inline`
   - `code_inline`
   - `compact_list`
+  - `nbsp`
   - `bold` (fixed math, code)
   - `italic` (fixed math, code)
   - `underline` (fixed math, code)
