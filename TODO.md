@@ -35,9 +35,3 @@
 # FIXES
 
 - bold = ** and italic = _
-- Parse
-  ```md
-    1. first
-    3. second
-  ```
-  as two separate lists.

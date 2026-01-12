@@ -36,7 +36,7 @@ let is_list_item (tokens : Lexer.token array) (pos : int) : bool =
       | _ -> false
 
 let is_compatible_list_item (tokens : Lexer.token array) (pos : int)
-    (open_tok : Lexer.token) : bool =
+    (open_tok : Lexer.token) (next_numbered_index : int) : bool =
   let n = Array.length tokens in
   if pos >= n then false
   else
@@ -46,6 +46,7 @@ let is_compatible_list_item (tokens : Lexer.token array) (pos : int)
         && tokens.(pos + 1) = Dot
         && tokens.(pos + 2) = Space
         && is_digits s
+        && int_of_string s = next_numbered_index
     | Dash, Dash | Star, Star | Plus, Plus | Tilde, Tilde ->
         pos + 1 < n && tokens.(pos + 1) = Space
     | _ -> false
@@ -123,11 +124,13 @@ let parse_single_item tokens pos open_tok reg =
 (* parse multiple consecutive list items that share the same marker (open_tok) starting at pos.
    returns (items_parsed_list, pos_after_items)
 *)
-let rec parse_items tokens pos open_tok reg acc =
-  if not (is_compatible_list_item tokens pos open_tok) then (List.rev acc, pos)
+let rec parse_items tokens pos open_tok next_numbered_index reg acc =
+  if not (is_compatible_list_item tokens pos open_tok next_numbered_index) then
+    (List.rev acc, pos)
   else
     let item_parsed, next_pos = parse_single_item tokens pos open_tok reg in
-    parse_items tokens next_pos open_tok reg (item_parsed :: acc)
+    parse_items tokens next_pos open_tok (next_numbered_index + 1) reg
+      (item_parsed :: acc)
 
 let parse_inline _ _ _ = None
 
@@ -149,7 +152,7 @@ let parse_block tokens pos reg =
       | Text s -> ( try int_of_string s with _ -> 1)
       | _ -> 1
     in
-    let items, pos_after = parse_items tokens pos open_tok reg [] in
+    let items, pos_after = parse_items tokens pos open_tok start_num reg [] in
     let consumed = pos_after - pos in
     Some (ListNode (ltype, start_num, items), consumed)
 
