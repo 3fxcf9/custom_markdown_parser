@@ -31,6 +31,7 @@ let build_registry () =
       (module Environment_feature);
       (module Heading_feature);
       (module Footnote_feature);
+      (module Link_feature);
     ]
   in
   List.iter (init_feature reg) features;

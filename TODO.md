@@ -5,8 +5,7 @@
 - `image`
 - `inline_figure`
 - `internal_reference`
-- `link`
-- `sidenote`
+- `footnote`
 - add spacer to provide multiple arguments to an env (like exercise and solution), for example :::
 
 # DOING
@@ -26,7 +25,8 @@
   - `code_inline`
   - `compact_list`
   - `nbsp`
-  - `footnote` (fixed math, code, parenthesis)
+  - `link` (fixed math, code, parenthesis, brackets)
+  - `sidenote` (fixed math, code, parenthesis)
   - `bold` (fixed math, code)
   - `italic` (fixed math, code)
   - `underline` (fixed math, code)
@@ -36,3 +36,4 @@
 # FIXES
 
 - bold = ** and italic = _
+- common base for feature (with fixes for math, code…)
