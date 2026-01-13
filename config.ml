@@ -30,6 +30,7 @@ let build_registry () =
       (module Compact_list_feature);
       (module Environment_feature);
       (module Heading_feature);
+      (module Footnote_feature);
     ]
   in
   List.iter (init_feature reg) features;
