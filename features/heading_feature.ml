@@ -10,6 +10,7 @@ let rec count_hash tokens pos =
   else
     match tokens.(pos) with Hash -> 1 + count_hash tokens (pos + 1) | _ -> 0
 
+(* gather tokens for a single line (including trailing Newline if present) *)
 let gather_line (tokens : Lexer.token array) (pos : int) :
     Lexer.token array * int =
   let n = Array.length tokens in

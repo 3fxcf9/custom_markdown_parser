@@ -3,9 +3,7 @@ open Lexer
 
 type node += MathDisplayNode of string
 
-(* scan $$ ... $$ starting at position
-   returns (content, consumed_tokens) *)
-let scan_math_block tokens pos =
+let parse_block tokens pos _reg =
   let n = Array.length tokens in
   if pos + 1 >= n then None
   else
@@ -21,16 +19,11 @@ let scan_math_block tokens pos =
                   Buffer.add_string buf (Lexer.token_to_literal tokens.(j))
                 done;
                 let content = Buffer.contents buf |> String.trim in
-                Some (content, i + 2 - pos)
+                Some (MathDisplayNode content, i + 2 - pos)
             | _ -> find_close (i + 1)
         in
         find_close (pos + 2)
     | _ -> None
-
-let parse_block tokens pos _reg =
-  match scan_math_block tokens pos with
-  | Some (content, consumed) -> Some (MathDisplayNode content, consumed)
-  | None -> None
 
 let parse_inline _ _ _ = None
 

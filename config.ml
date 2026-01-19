@@ -23,6 +23,7 @@ let build_registry () =
       (module Strikethrough_feature);
       (module Hrule_feature);
       (module Code_inline);
+      (module Code_block);
       (module Math_inline);
       (module Math_display);
       (module List_feature);
