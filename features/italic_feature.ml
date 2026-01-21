@@ -1,9 +1,10 @@
 open Lexer
 open Ast
 
-let parse_block _ _ _ = None
+let parse_block _ _ _ _ = None
 
-let parse_inline (tokens : Lexer.token array) (pos : int) reg =
+let parse_inline (tokens : Lexer.token array) (pos : int)
+    (_after_reference : bool) reg =
   if pos >= Array.length tokens then None
   else
     match tokens.(pos) with

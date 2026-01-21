@@ -8,8 +8,10 @@ type t = {
   mutable tex_renderers : renderer_function list;
 }
 
-and parser_function = Lexer.token array -> int -> t -> (Ast.node * int) option
-and paragraph_stop_condition = Lexer.token array -> int -> t -> bool
+and parser_function =
+  Lexer.token array -> int -> bool -> t -> (Ast.node * int) option
+
+and paragraph_stop_condition = Lexer.token array -> int -> bool -> t -> bool
 and renderer_function = t -> string -> node -> string option
 (* render reg id_string (empty or id="something") node *)
 
@@ -51,7 +53,7 @@ let create_registry () : t =
   (* default paragraph stop condition *)
   registry.paragraph_stop_conditions <-
     [
-      (fun tokens pos _ ->
+      (fun tokens pos _after_reference _ ->
         if pos + 1 < Array.length tokens then
           match (tokens.(pos), tokens.(pos + 1)) with
           | Newline, Newline -> true

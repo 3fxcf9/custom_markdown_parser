@@ -1,7 +1,8 @@
 open Ast
 open Lexer
 
-let parse_block (tokens : Lexer.token array) (pos : int) _reg =
+let parse_block (tokens : Lexer.token array) (pos : int)
+    (_after_reference : bool) _reg =
   let n = Array.length tokens in
   if pos + 1 >= n then None
   else
@@ -23,7 +24,7 @@ let parse_block (tokens : Lexer.token array) (pos : int) _reg =
         find_close (pos + 2)
     | _ -> None
 
-let parse_inline _ _ _ = None
+let parse_inline _ _ _ _ = None
 
 let render_html _reg id = function
   | MathDisplayNode content ->

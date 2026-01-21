@@ -3,7 +3,8 @@ open Registry
 let init_feature (registry : Registry.t) (feature : (module Feature.FEATURE)) =
   let module F = (val feature : Feature.FEATURE) in
   registry.paragraph_stop_conditions <-
-    (fun tokens pos reg -> F.parse_block tokens pos reg |> Option.is_some)
+    (fun tokens pos after_reference reg ->
+      F.parse_block tokens pos after_reference reg |> Option.is_some)
     :: registry.paragraph_stop_conditions;
   registry.block_parsers <- F.parse_block :: registry.block_parsers;
   registry.inline_parsers <- F.parse_inline :: registry.inline_parsers;

@@ -3,9 +3,10 @@ open Ast
 
 (* Requires list_feature to be enabled *)
 
-let parse_inline _ _ _ = None
+let parse_inline _ _ _ _ = None
 
-let parse_block (tokens : Lexer.token array) (pos : int) reg =
+let parse_block (tokens : Lexer.token array) (pos : int)
+    (_after_reference : bool) reg =
   let n = Array.length tokens in
   if pos + 1 >= n then None
   else if tokens.(pos) <> Tilde || tokens.(pos + 1) <> Space then None

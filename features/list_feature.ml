@@ -20,9 +20,10 @@ let is_digits s =
 
 let token_is_space = function Space -> true | _ -> false
 
-let is_list_item (tokens : Lexer.token array) (pos : int) : bool =
+let is_list_item (tokens : Lexer.token array) (pos : int)
+    (after_reference : bool) : bool =
   (* must be at start of a line *)
-  if pos > 0 && tokens.(pos - 1) <> Newline then false
+  if pos > 0 && tokens.(pos - 1) <> Newline && not after_reference then false
   else
     let n = Array.length tokens in
     if pos + 1 >= n then false
@@ -129,10 +130,11 @@ let rec parse_items tokens pos open_tok next_numbered_index reg acc =
     parse_items tokens next_pos open_tok (next_numbered_index + 1) reg
       (item_parsed :: acc)
 
-let parse_inline _ _ _ = None
+let parse_inline _ _ _ _ = None
 
-let parse_block (tokens : Lexer.token array) (pos : int) reg =
-  if not (is_list_item tokens pos) then None
+let parse_block (tokens : Lexer.token array) (pos : int)
+    (after_reference : bool) reg =
+  if not (is_list_item tokens pos after_reference) then None
   else
     let open_tok = tokens.(pos) in
     let ltype =

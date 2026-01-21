@@ -1,7 +1,7 @@
 open Lexer
 open Ast
 
-let parse_block _ _ _ = None
+let parse_block _ _ _ _ = None
 
 let parse_url tokens pos =
   match tokens.(pos) with
@@ -49,7 +49,8 @@ let parse_url tokens pos =
       find_close (pos + 1) 0 0 0 0
   | _ -> None
 
-let parse_inline (tokens : Lexer.token array) (pos : int) reg =
+let parse_inline (tokens : Lexer.token array) (pos : int)
+    (_after_reference : bool) reg =
   if pos + 3 >= Array.length tokens then None
   else
     match tokens.(pos) with

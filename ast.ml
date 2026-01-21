@@ -20,6 +20,6 @@ type node =
   | MathDisplayNode of string
   | MathInlineNode of string
   | NbspNode of bool
-  | ReferenceTagNode of string
   | StrikethroughNode of node list
   | UnderlineNode of node list
+  | ReferenceTagNode of string

@@ -9,7 +9,8 @@ let gather_line_no_newline (tokens : Lexer.token array) (pos : int) :
   let i = loop pos in
   (Array.sub tokens pos (i - pos), i - pos)
 
-let parse_block (tokens : Lexer.token array) (pos : int) _reg =
+let parse_block (tokens : Lexer.token array) (pos : int)
+    (_after_reference : bool) _reg =
   let n = Array.length tokens in
   if pos + 2 >= n then None
   else
@@ -36,7 +37,7 @@ let parse_block (tokens : Lexer.token array) (pos : int) _reg =
         find_close (pos + 2 + consumed)
     | _ -> None
 
-let parse_inline _ _ _ = None
+let parse_inline _ _ _ _ = None
 
 let render_html _reg id = function
   | CodeBlockNode (Some lang, content) ->

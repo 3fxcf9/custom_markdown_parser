@@ -3,13 +3,13 @@ open Lexer
 open Ast
 
 (* Try parsers sequentially; returns Some (node, consumed) or None *)
-let rec try_parsers parsers tokens pos reg =
+let rec try_parsers parsers tokens pos after_reference reg =
   match parsers with
   | [] -> None
   | p :: tl -> (
-      match p tokens pos reg with
+      match p tokens pos after_reference reg with
       | Some _ as res -> res
-      | None -> try_parsers tl tokens pos reg)
+      | None -> try_parsers tl tokens pos after_reference reg)
 
 let is_blank_tokens (tokens : Lexer.token array) : bool =
   Array.for_all
@@ -25,9 +25,12 @@ let parse_inlines (reg : Registry.t) (tokens : Lexer.token array) :
   let acc = ref [] in
   let i = ref 0 in
   let n = Array.length tokens in
+  let after_reference = ref false in
   while !i < n do
-    match try_parsers reg.inline_parsers tokens !i reg with
+    match try_parsers reg.inline_parsers tokens !i !after_reference reg with
     | Some (node, consumed) ->
+        (after_reference :=
+           match node with ReferenceTagNode _ -> true | _ -> false);
         acc := node :: !acc;
         i := !i + consumed
     | None ->
@@ -44,10 +47,13 @@ let parse (reg : Registry.t) (tokens : Lexer.token array) : Ast.node list =
   let acc = ref [] in
   let i = ref 0 in
   let n = Array.length tokens in
+  let after_reference = ref false in
 
   while !i < n do
-    match try_parsers reg.block_parsers tokens !i reg with
+    match try_parsers reg.block_parsers tokens !i !after_reference reg with
     | Some (node, consumed) ->
+        (after_reference :=
+           match node with ReferenceTagNode _ -> true | _ -> false);
         acc := node :: !acc;
         i := !i + consumed
     | None ->
@@ -62,7 +68,7 @@ let parse (reg : Registry.t) (tokens : Lexer.token array) : Ast.node list =
             | _ ->
                 if
                   List.exists
-                    (fun cond -> cond tokens !i reg)
+                    (fun cond -> cond tokens !i !after_reference reg)
                     reg.paragraph_stop_conditions
                 then ()
                 else (

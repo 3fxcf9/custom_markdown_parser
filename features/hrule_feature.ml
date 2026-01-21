@@ -29,12 +29,13 @@ let is_hrule_line tokens pos =
         else if !i < n && tokens.(!i) = Newline then Some (kind, count + 1)
         else None
 
-let parse_block (tokens : Lexer.token array) (pos : int) _reg =
+let parse_block (tokens : Lexer.token array) (pos : int)
+    (_after_reference : bool) _reg =
   match is_hrule_line tokens pos with
   | Some (kind, consumed) -> Some (HRuleNode kind, consumed)
   | None -> None
 
-let parse_inline _ _ _ = None
+let parse_inline _ _ _ _ = None
 
 let render_html _reg id = function
   | HRuleNode Compact ->

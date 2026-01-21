@@ -111,9 +111,10 @@ let rec collect_indented_lines tokens pos indent_min acc_rev =
         (* Not an indented continuation -> stop collecting *)
         (acc_rev, pos)
 
-let parse_inline _ _ _ = None
+let parse_inline _ _ _ _ = None
 
-let parse_block (tokens : Lexer.token array) (pos : int) reg =
+let parse_block (tokens : Lexer.token array) (pos : int)
+    (_after_reference : bool) reg =
   match parse_env_open_line tokens pos with
   | None -> None
   | Some (env_name, title_opt, after_open_pos) -> (
@@ -202,12 +203,11 @@ let render_html reg id = function
               match title_opt with
               | Some t ->
                   Printf.sprintf
-                    "<div%s class=\"environment-title\">%s — %s</div>" id
+                    "<div class=\"environment-title\">%s — %s</div>"
                     (String.capitalize_ascii env_name)
                     t
               | None ->
-                  Printf.sprintf "<div%s class=\"environment-title\">%s</div>"
-                    id
+                  Printf.sprintf "<div class=\"environment-title\">%s</div>"
                     (String.capitalize_ascii env_name))
           | _ -> ""
         in
