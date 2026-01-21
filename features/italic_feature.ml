@@ -9,21 +9,27 @@ let parse_inline (tokens : Lexer.token array) (pos : int)
   else
     match tokens.(pos) with
     | (Star | Underscore) as open_kind ->
-        let rec find_close i count_math count_code =
+        let rec find_close i count_math count_code count_bracket =
           if i >= Array.length tokens then None
           else
             match tokens.(i) with
-            | Backtick -> find_close (i + 1) count_math (count_code + 1)
-            | Dollar -> find_close (i + 1) (count_math + 1) count_code
+            | Backtick ->
+                find_close (i + 1) count_math (count_code + 1) count_bracket
+            | Dollar ->
+                find_close (i + 1) (count_math + 1) count_code count_bracket
+            | Lbracket | Rbracket ->
+                find_close (i + 1) count_math count_code (count_bracket + 1)
             | k
-              when k = open_kind && count_math mod 2 = 0 && count_code mod 2 = 0
-              ->
+              when k = open_kind
+                   && count_math mod 2 = 0
+                   && count_code mod 2 = 0
+                   && count_bracket mod 2 = 0 ->
                 let inner = Array.sub tokens (pos + 1) (i - pos - 1) in
                 let content = Parser.parse_inlines reg inner in
                 Some (ItalicNode content, i - pos + 1)
-            | _ -> find_close (i + 1) count_math count_code
+            | _ -> find_close (i + 1) count_math count_code count_bracket
         in
-        find_close (pos + 1) 0 0
+        find_close (pos + 1) 0 0 0
     | _ -> None
 
 let render_html reg id = function

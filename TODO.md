@@ -29,7 +29,7 @@
   - `link` (fixed math, code, parenthesis, brackets)
   - `sidenote` (fixed math, code, parenthesis)
   - `bold` (fixed math, code)
-  - `italic` (fixed math, code)
+  - `italic` (fixed math, code, brackets)
   - `underline` (fixed math, code)
   - `highlight` (fixed math, code)
   - `strikethrough` (fixed math, code)

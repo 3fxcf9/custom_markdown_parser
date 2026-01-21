@@ -34,6 +34,7 @@ let build_registry () =
       (module Heading_feature);
       (module Footnote_feature);
       (module Link_feature);
+      (module Reference_feature);
       (module Reference_tag_feature);
     ]
   in

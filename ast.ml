@@ -22,4 +22,5 @@ type node =
   | NbspNode of bool
   | StrikethroughNode of node list
   | UnderlineNode of node list
+  | ReferenceNode of string
   | ReferenceTagNode of string
