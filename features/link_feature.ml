@@ -1,6 +1,5 @@
 open Lexer
-
-type Ast.node += LinkNode of (Ast.node list * string)
+open Ast
 
 let parse_block _ _ _ = None
 
@@ -50,7 +49,7 @@ let parse_url tokens pos =
       find_close (pos + 1) 0 0 0 0
   | _ -> None
 
-let parse_inline tokens pos registry =
+let parse_inline (tokens : Lexer.token array) (pos : int) reg =
   if pos + 3 >= Array.length tokens then None
   else
     match tokens.(pos) with
@@ -81,7 +80,7 @@ let parse_inline tokens pos registry =
                    && count_brackets mod 2 = 0
                    && count_parenthesis mod 2 = 0 -> (
                 let inner = Array.sub tokens (pos + 1) (i - pos - 1) in
-                let content = Parser.parse_inlines registry inner in
+                let content = Parser.parse_inlines reg inner in
                 match parse_url tokens (i + 1) with
                 | Some (url, end_index) ->
                     Some (LinkNode (content, url), end_index - pos + 1)
@@ -96,11 +95,12 @@ let parse_inline tokens pos registry =
         find_close (pos + 1) 0 0 0 0
     | _ -> None
 
-let render_html reg = function
+let render_html reg id = function
   | LinkNode (children, link) ->
       Some
-        (Printf.sprintf "<a href=\"%s\">%s</a>" link
-           (String.concat "" (List.map (Registry.render_html reg) children)))
+        (Printf.sprintf "<a%s href=\"%s\">%s</a>" id link
+           (String.concat ""
+              (List.map (Registry.render_html reg None) children)))
   | _ -> None
 
-let render_tex _ _ = failwith "not handled"
+let render_tex _ _ _ = failwith "not handled"

@@ -10,21 +10,32 @@ type t = {
 
 and parser_function = Lexer.token array -> int -> t -> (Ast.node * int) option
 and paragraph_stop_condition = Lexer.token array -> int -> t -> bool
-and renderer_function = t -> node -> string option
+and renderer_function = t -> string -> node -> string option
+(* render reg id_string (empty or id="something") node *)
 
 (* Renderer.  TODO: Split *)
-let render_html (reg : t) node : string =
+let render_html (reg : t) (id : string option) node : string =
+  let id_string =
+    match id with Some s -> Printf.sprintf " id=\"%s\"" s | None -> ""
+  in
   let rec try_renderer = function
     | [] -> failwith "No renderer found"
     | renderer :: tl -> (
-        match renderer reg node with Some s -> s | None -> try_renderer tl)
+        match renderer reg id_string node with
+        | Some s -> s
+        | None -> try_renderer tl)
   in
   try_renderer reg.html_renderers
 
 let render_tex _ _ = ""
 
-let render_document (reg : t) (doc : node list) : string =
-  doc |> List.map (render_html reg) |> String.concat ""
+(* FIXME: Handle two consecutive referenceNode *)
+let rec render_document (reg : t) (doc : node list) : string =
+  match doc with
+  | ReferenceTagNode next_id :: hd :: tl ->
+      render_html reg (Some next_id) hd ^ render_document reg tl
+  | hd :: tl -> render_html reg None hd ^ render_document reg tl
+  | _ -> ""
 
 let create_registry () : t =
   let registry : t =
@@ -51,16 +62,16 @@ let create_registry () : t =
   (* default HTML renderers *)
   registry.html_renderers <-
     [
-      (fun reg node ->
+      (fun reg id node ->
         match node with
         | ParagraphNode children ->
-            let results = List.map (render_html reg) children in
-            Some ("<p>" ^ String.concat "" results ^ "</p>")
+            let results = List.map (render_html reg None) children in
+            Some (Printf.sprintf "<p%s>%s</p>" id (String.concat "" results))
         | _ -> None);
     ];
 
   registry.html_renderers <-
-    (fun _reg node -> match node with TextNode s -> Some s | _ -> None)
+    (fun _reg _id node -> match node with TextNode s -> Some s | _ -> None)
     :: registry.html_renderers;
 
   registry

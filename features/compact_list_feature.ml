@@ -1,11 +1,11 @@
 open Lexer
-open List_feature
+open Ast
 
 (* Requires list_feature to be enabled *)
 
 let parse_inline _ _ _ = None
 
-let parse_block tokens pos reg =
+let parse_block (tokens : Lexer.token array) (pos : int) reg =
   let n = Array.length tokens in
   if pos + 1 >= n then None
   else if tokens.(pos) <> Tilde || tokens.(pos + 1) <> Space then None
@@ -45,5 +45,5 @@ let parse_block tokens pos reg =
         Some (ListNode (Compact, 1, items), stop_pos - pos)
     | _ -> None
 
-let render_html _ _ = None
-let render_tex _ _ = None
+let render_html _ _ _ = None
+let render_tex _ _ _ = None

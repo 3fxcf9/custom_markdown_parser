@@ -1,10 +1,9 @@
 open Lexer
-
-type Ast.node += ItalicNode of Ast.node list
+open Ast
 
 let parse_block _ _ _ = None
 
-let parse_inline tokens pos registry =
+let parse_inline (tokens : Lexer.token array) (pos : int) reg =
   if pos >= Array.length tokens then None
   else
     match tokens.(pos) with
@@ -19,22 +18,22 @@ let parse_inline tokens pos registry =
               when k = open_kind && count_math mod 2 = 0 && count_code mod 2 = 0
               ->
                 let inner = Array.sub tokens (pos + 1) (i - pos - 1) in
-                let content = Parser.parse_inlines registry inner in
+                let content = Parser.parse_inlines reg inner in
                 Some (ItalicNode content, i - pos + 1)
             | _ -> find_close (i + 1) count_math count_code
         in
         find_close (pos + 1) 0 0
     | _ -> None
 
-let render_html reg = function
+let render_html reg id = function
   | ItalicNode children ->
       Some
-        ("<em>"
-        ^ String.concat "" (List.map (Registry.render_html reg) children)
-        ^ "</em>")
+        (Printf.sprintf "<em%s>%s</em>" id
+           (String.concat ""
+              (List.map (Registry.render_html reg None) children)))
   | _ -> None
 
-let render_tex reg = function
+let render_tex reg _id = function
   | ItalicNode children ->
       Some
         ("\\textt{"

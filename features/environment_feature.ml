@@ -1,8 +1,6 @@
 open Ast
 open Lexer
 
-type node += EnvironmentNode of string * string option * node list
-
 let allowed_envs =
   [
     "thm";
@@ -115,7 +113,7 @@ let rec collect_indented_lines tokens pos indent_min acc_rev =
 
 let parse_inline _ _ _ = None
 
-let parse_block tokens pos reg =
+let parse_block (tokens : Lexer.token array) (pos : int) reg =
   match parse_env_open_line tokens pos with
   | None -> None
   | Some (env_name, title_opt, after_open_pos) -> (
@@ -133,9 +131,9 @@ let parse_block tokens pos reg =
           Some (EnvironmentNode (env_name, title_opt, parsed), pos_after + 2)
       | _ -> None)
 
-let render_tex _ _ = None
+let render_tex _ _ _ = None
 
-let render_html reg = function
+let render_html reg id = function
   | EnvironmentNode (env_short, title_opt, content_nodes) ->
       let title_html =
         match title_opt with
@@ -143,16 +141,17 @@ let render_html reg = function
         | Some t -> Printf.sprintf "<div class=\"environment-title\">%s</div>" t
       in
       let content_html =
-        String.concat "" (List.map (Registry.render_html reg) content_nodes)
+        String.concat ""
+          (List.map (Registry.render_html reg None) content_nodes)
       in
       let render_figure class_name =
         if title_html <> "" then
           Printf.sprintf
-            "<figure class=\"%s\">%s<figcaption>%s</figcaption></figure>"
+            "<figure%s class=\"%s\">%s<figcaption>%s</figcaption></figure>" id
             class_name content_html
             (match title_opt with Some s -> s | None -> "")
         else
-          Printf.sprintf "<figure class=\"%s\">%s</figure>" class_name
+          Printf.sprintf "<figure%s class=\"%s\">%s</figure>" id class_name
             content_html
       in
       let render_normal env =
@@ -203,40 +202,42 @@ let render_html reg = function
               match title_opt with
               | Some t ->
                   Printf.sprintf
-                    "<div class=\"environment-title\">%s — %s</div>"
+                    "<div%s class=\"environment-title\">%s — %s</div>" id
                     (String.capitalize_ascii env_name)
                     t
               | None ->
-                  Printf.sprintf "<div class=\"environment-title\">%s</div>"
+                  Printf.sprintf "<div%s class=\"environment-title\">%s</div>"
+                    id
                     (String.capitalize_ascii env_name))
           | _ -> ""
         in
-        Printf.sprintf "<div class=\"environment environment-%s\">%s%s</div>"
-          env_name title_section content_html
+        Printf.sprintf "<div%s class=\"environment environment-%s\">%s%s</div>"
+          id env_name title_section content_html
       in
       let out =
         match env_short with
         | "offprog" ->
-            Printf.sprintf "<div class=\"off-program\">%s</div>" content_html
+            Printf.sprintf "<div%s class=\"off-program\">%s</div>" id
+              content_html
         | "fig" -> render_figure ""
         | "lfig" -> render_figure "float-left"
         | "rfig" -> render_figure "float-right"
         | "quote" ->
             if title_html <> "" then
               Printf.sprintf
-                "<div \
+                "<div%s \
                  class=\"blockquote\"><blockquote>%s</blockquote><cite>%s</cite></div>"
-                content_html
+                id content_html
                 (match title_opt with Some s -> s | None -> "")
             else
               Printf.sprintf
-                "<div class=\"blockquote\"><blockquote>%s</blockquote></div>"
-                content_html
+                "<div%s class=\"blockquote\"><blockquote>%s</blockquote></div>"
+                id content_html
         | "fold" ->
             let summary =
               match title_opt with Some s -> s | None -> "View more"
             in
-            Printf.sprintf "<details>%s<summary>%s</summary></details>"
+            Printf.sprintf "<details%s>%s<summary>%s</summary></details>" id
               content_html summary
         | other -> render_normal other
       in

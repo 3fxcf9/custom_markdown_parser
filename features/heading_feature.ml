@@ -1,8 +1,6 @@
 open Ast
 open Lexer
 
-type node += HeadingNode of int * node list
-
 let parse_inline _ _ _ = None
 
 let rec count_hash tokens pos =
@@ -19,7 +17,7 @@ let gather_line (tokens : Lexer.token array) (pos : int) :
   if i >= n then (Array.sub tokens pos (i - pos), i - pos)
   else (Array.sub tokens pos (i - pos + 1), i - pos + 1)
 
-let parse_block tokens pos registry =
+let parse_block (tokens : Lexer.token array) (pos : int) reg =
   if pos > 0 && tokens.(pos - 1) <> Newline then None
   else
     match count_hash tokens pos with
@@ -31,17 +29,17 @@ let parse_block tokens pos registry =
           | Space ->
               (* +1: skip space *)
               let line_tokens, consumed = gather_line tokens (pos + l + 1) in
-              let content = Parser.parse_inlines registry line_tokens in
+              let content = Parser.parse_inlines reg line_tokens in
               Some (HeadingNode (l, content), l + 1 + consumed)
           | _ -> None)
     | _ -> None
 
-let render_html reg = function
+let render_html reg id = function
   | HeadingNode (level, children) ->
       let html =
-        String.concat "" (List.map (Registry.render_html reg) children)
+        String.concat "" (List.map (Registry.render_html reg None) children)
       in
-      Some (Printf.sprintf "<h%d>%s</h%d>" level html level)
+      Some (Printf.sprintf "<h%d%s>%s</h%d>" level id html level)
   | _ -> None
 
 let render_tex _ _ = failwith "not handled"

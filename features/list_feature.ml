@@ -3,9 +3,6 @@ open Lexer
 
 (* Tilde is for compact list (each item is parsed inline) *)
 
-type list_type = Ordered | Dash | Star | Plus | Compact
-type node += ListNode of list_type * int * node list list
-
 (* gather tokens for a single line (including trailing Newline if present) *)
 let gather_line (tokens : Lexer.token array) (pos : int) :
     Lexer.token array * int =
@@ -134,7 +131,7 @@ let rec parse_items tokens pos open_tok next_numbered_index reg acc =
 
 let parse_inline _ _ _ = None
 
-let parse_block tokens pos reg =
+let parse_block (tokens : Lexer.token array) (pos : int) reg =
   if not (is_list_item tokens pos) then None
   else
     let open_tok = tokens.(pos) in
@@ -156,7 +153,7 @@ let parse_block tokens pos reg =
     let consumed = pos_after - pos in
     Some (ListNode (ltype, start_num, items), consumed)
 
-let render_html reg = function
+let render_html reg id = function
   | ListNode (ltype, start_num, items) ->
       let tag = match ltype with Ordered -> "ol" | _ -> "ul" in
       let args =
@@ -170,13 +167,13 @@ let render_html reg = function
         | _ -> ""
       in
       let buf = Buffer.create 128 in
-      Buffer.add_string buf (Printf.sprintf "<%s%s>\n" tag args);
+      Buffer.add_string buf (Printf.sprintf "<%s%s%s>\n" tag args id);
       List.iter
         (fun item_children ->
           Buffer.add_string buf "<li>";
           List.iter
             (fun child ->
-              Buffer.add_string buf (Registry.render_html reg child))
+              Buffer.add_string buf (Registry.render_html reg None child))
             item_children;
           Buffer.add_string buf "</li>\n")
         items;
@@ -184,7 +181,7 @@ let render_html reg = function
       Some (Buffer.contents buf)
   | _ -> None
 
-let render_tex reg = function
+let render_tex reg _id = function
   | ListNode (ltype, _start, items) ->
       let env = match ltype with Ordered -> "enumerate" | _ -> "itemize" in
       let buf = Buffer.create 256 in

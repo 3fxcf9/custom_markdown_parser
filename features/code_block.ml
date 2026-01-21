@@ -1,8 +1,6 @@
 open Ast
 open Lexer
 
-type node += CodeBlockNode of string option * string
-
 (* gather tokens for a single line (EXCLUDING trailing Newline if present) *)
 let gather_line_no_newline (tokens : Lexer.token array) (pos : int) :
     Lexer.token array * int =
@@ -11,7 +9,7 @@ let gather_line_no_newline (tokens : Lexer.token array) (pos : int) :
   let i = loop pos in
   (Array.sub tokens pos (i - pos), i - pos)
 
-let parse_block tokens pos _reg =
+let parse_block (tokens : Lexer.token array) (pos : int) _reg =
   let n = Array.length tokens in
   if pos + 2 >= n then None
   else
@@ -40,16 +38,16 @@ let parse_block tokens pos _reg =
 
 let parse_inline _ _ _ = None
 
-let render_html _reg = function
+let render_html _reg id = function
   | CodeBlockNode (Some lang, content) ->
       Some
-        (Printf.sprintf "<pre><code class=\"language-%s\">%s</code></div>" lang
-           content)
+        (Printf.sprintf "<pre><code%s class=\"language-%s\">%s</code></div>" id
+           lang content)
   | CodeBlockNode (None, content) ->
-      Some ("<pre><code>" ^ content ^ "</code></pre>")
+      Some (Printf.sprintf "<pre><code%s>%s</code></div>" id content)
   | _ -> None
 
-let render_tex _reg = function
+let render_tex _reg _id = function
   | CodeBlockNode (_, content) ->
       Some ("\\begin{lstlisting}" ^ content ^ "\\end{lstlisting}")
   | _ -> None

@@ -1,11 +1,9 @@
 open Ast
 open Lexer
 
-type node += MathInlineNode of string
-
 let parse_block _ _ _ = None
 
-let parse_inline tokens pos _reg =
+let parse_inline (tokens : Lexer.token array) (pos : int) _reg =
   let n = Array.length tokens in
   if pos + 1 >= n then None
   else
@@ -26,11 +24,11 @@ let parse_inline tokens pos _reg =
         find_close (pos + 1)
     | _ -> None
 
-let render_html _reg = function
+let render_html _reg id = function
   | MathInlineNode content ->
-      Some ("<code class=\"math-inline\">" ^ content ^ "</code>")
+      Some (Printf.sprintf "<code%s class=\"math-inline\">%s</code>" id content)
   | _ -> None
 
-let render_tex _reg = function
+let render_tex _reg _id = function
   | MathInlineNode content -> Some ("$" ^ content ^ "$")
   | _ -> None

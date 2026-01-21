@@ -1,9 +1,7 @@
 open Ast
 open Lexer
 
-type node += MathDisplayNode of string
-
-let parse_block tokens pos _reg =
+let parse_block (tokens : Lexer.token array) (pos : int) _reg =
   let n = Array.length tokens in
   if pos + 1 >= n then None
   else
@@ -27,11 +25,12 @@ let parse_block tokens pos _reg =
 
 let parse_inline _ _ _ = None
 
-let render_html _reg = function
+let render_html _reg id = function
   | MathDisplayNode content ->
-      Some ("<code class=\"math-display\">" ^ content ^ "</code>")
+      Some
+        (Printf.sprintf "<code class=\"math-display\"%s>%s</code>" id content)
   | _ -> None
 
-let render_tex _reg = function
+let render_tex _reg _id = function
   | MathDisplayNode content -> Some ("\n\\[\n" ^ content ^ "\n\\]")
   | _ -> None

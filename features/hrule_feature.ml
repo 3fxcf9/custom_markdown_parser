@@ -1,17 +1,16 @@
 open Ast
 open Lexer
 
-type hr_kind = Compact | Solid | Dashed | Sawteeth
-type node += HRuleNode of hr_kind
-
-let hr_kind_of_token = function
+let hr_kind_of_token token : hr_kind option =
+  match token with
   | Tilde -> Some Compact
   | Equal -> Some Solid
   | Dash -> Some Dashed
   | Caret -> Some Sawteeth
   | _ -> None
 
-let min_count = function Compact -> 1 | Solid | Dashed | Sawteeth -> 3
+let min_count (hr_type : hr_kind) =
+  match hr_type with Compact -> 1 | Solid | Dashed | Sawteeth -> 3
 
 (* Number of tokens to consume INCLUDING newline *)
 let is_hrule_line tokens pos =
@@ -30,20 +29,22 @@ let is_hrule_line tokens pos =
         else if !i < n && tokens.(!i) = Newline then Some (kind, count + 1)
         else None
 
-let parse_block tokens pos _reg =
+let parse_block (tokens : Lexer.token array) (pos : int) _reg =
   match is_hrule_line tokens pos with
   | Some (kind, consumed) -> Some (HRuleNode kind, consumed)
   | None -> None
 
 let parse_inline _ _ _ = None
 
-let render_html _reg = function
-  | HRuleNode Compact -> Some "<hr class=\"style-compact\">"
-  | HRuleNode Solid -> Some "<hr class=\"style-solid\">"
-  | HRuleNode Dashed -> Some "<hr class=\"style-dashed\">"
-  | HRuleNode Sawteeth -> Some "<hr class=\"style-sawteeth\">"
+let render_html _reg id = function
+  | HRuleNode Compact ->
+      Some (Printf.sprintf "<hr%s class=\"style-compact\">" id)
+  | HRuleNode Solid -> Some (Printf.sprintf "<hr%s class=\"style-solid\">" id)
+  | HRuleNode Dashed -> Some (Printf.sprintf "<hr%s class=\"style-dashed\">" id)
+  | HRuleNode Sawteeth ->
+      Some (Printf.sprintf "<hr%s class=\"style-sawteeth\">" id)
   | _ -> None
 
-let render_tex _reg = function
+let render_tex _reg _id = function
   | HRuleNode _ -> Some "\\par\\noindent\\rule{\\textwidth}{0.4pt}\\par"
   | _ -> None
