@@ -1,9 +1,7 @@
 # TODO
 
-- `anchor`
 - `image`
 - `inline_figure`
-- `internal_reference`
 - `footnote`
 - `def-prop` environment
 - add spacer to provide multiple arguments to an env (like exercise and solution), for example :::

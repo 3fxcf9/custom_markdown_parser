@@ -11,6 +11,7 @@ let allowed_envs =
     "notation";
     "proof";
     "def";
+    "defprop";
     "method";
     "rem";
     "eg";
@@ -129,7 +130,8 @@ let parse_block (tokens : Lexer.token array) (pos : int)
           let parsed =
             if Array.length tokens = 0 then [] else Parser.parse reg tokens
           in
-          Some (EnvironmentNode (env_name, title_opt, parsed), pos_after + 2)
+          Some
+            (EnvironmentNode (env_name, title_opt, parsed), pos_after - pos + 2)
       | _ -> None)
 
 let render_tex _ _ _ = None
@@ -156,13 +158,14 @@ let render_html reg id = function
             content_html
       in
       let render_normal env =
-        let _translate_shortcut =
+        let translate_shortcut =
           [
             ("thm", "theorem");
             ("prop", "proposition");
             ("cor", "corollary");
             ("rem", "remark");
             ("def", "definition");
+            ("defprop", "definition-proposition");
             ("eg", "example");
           ]
         in
@@ -174,14 +177,15 @@ let render_html reg id = function
             ("lemma", "lemme");
             ("rem", "remarque");
             ("def", "définition");
+            ("defprop", "définition-proposition");
             ("eg", "exemple");
             ("method", "méthode");
             ("property", "propriété");
           ]
         in
         let lookup map key = try List.assoc key map with _ -> key in
-        (* NOTE: Change `translate_shortcut_fr` to `translate_shortcut` below to use english name *)
-        let env_name = lookup translate_shortcut_fr env in
+        let env_name = lookup translate_shortcut env in
+        let env_name_fr = lookup translate_shortcut_fr env in
         let title_section =
           match env with
           | "callout" ->
@@ -197,6 +201,7 @@ let render_html reg id = function
                      "lemma";
                      "property";
                      "def";
+                     "defprop";
                      "method";
                      "notation";
                    ] -> (
@@ -204,11 +209,12 @@ let render_html reg id = function
               | Some t ->
                   Printf.sprintf
                     "<div class=\"environment-title\">%s — %s</div>"
-                    (String.capitalize_ascii env_name)
+                    (String.capitalize_ascii env_name_fr)
+                    (* TODO: Make locale selection configurable *)
                     t
               | None ->
                   Printf.sprintf "<div class=\"environment-title\">%s</div>"
-                    (String.capitalize_ascii env_name))
+                    (String.capitalize_ascii env_name_fr))
           | _ -> ""
         in
         Printf.sprintf "<div%s class=\"environment environment-%s\">%s%s</div>"

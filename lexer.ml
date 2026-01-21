@@ -27,6 +27,38 @@ type token =
   | Indent of int
   | Text of string
 
+let debug_token token =
+  print_string
+  @@
+  match token with
+  | Newline -> "[NEWLINE]"
+  | Space -> "[SPACE]"
+  | Dot -> "[.]"
+  | Star -> "[*]"
+  | Plus -> "[+]"
+  | Equal -> "[=]"
+  | Dash -> "[-]"
+  | Slash -> "[/]"
+  | Underscore -> "[_]"
+  | Dollar -> "[$]"
+  | Hash -> "[#]"
+  | At -> "[@]"
+  | Percent -> "[%]"
+  | Tilde -> "[~]"
+  | Caret -> "[^]"
+  | Colon -> "[:]"
+  | Backtick -> "[`]"
+  | Langle -> "[<]"
+  | Rangle -> "[>]"
+  | Lparen -> "[(]"
+  | Rparen -> "[)]"
+  | Lbracket -> "[DELIM:[]"
+  | Rbracket -> "[DELIM:]]"
+  | Lcurly -> "[{]"
+  | Rcurly -> "[}]"
+  | Indent level -> Printf.sprintf "[INDENT:%d]" level
+  | Text s -> Printf.sprintf "[TEXT:%s]" s
+
 let token_to_literal token =
   match token with
   | Newline -> "\n"
