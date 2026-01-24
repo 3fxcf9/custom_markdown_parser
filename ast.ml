@@ -1,6 +1,32 @@
 type hr_kind = Compact | Solid | Dashed | Sawteeth
 type list_type = Ordered | Dash | Star | Plus | Compact
 
+let translate_shortcut_fr =
+  [
+    ("thm", "théorème");
+    ("prop", "proposition");
+    ("cor", "corollaire");
+    ("lemma", "lemme");
+    ("property", "propriété");
+    ("notation", "notation");
+    ("proof", "preuve");
+    ("rem", "remarque");
+    ("def", "définition");
+    ("defprop", "définition-proposition");
+    ("eg", "exemple");
+    ("method", "méthode");
+    ("exercise", "exercice");
+    ("quote", "citation");
+    ("fig", "figure");
+    ("lfig", "figure");
+    ("rfig", "figure");
+    ("callout", "encadré");
+  ]
+
+let environment_display_name environment_name =
+  try List.assoc environment_name translate_shortcut_fr
+  with _ -> environment_name
+
 (* type node = .. *)
 (* type node += TextNode of string | ParagraphNode of node list *)
 type node =

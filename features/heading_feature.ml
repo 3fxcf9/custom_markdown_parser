@@ -37,8 +37,6 @@ let parse_block (tokens : Lexer.token array) (pos : int)
 
 let render_html reg id = function
   | HeadingNode (level, children) ->
-      print_int level;
-      print_newline ();
       let html =
         String.concat "" (List.map (Registry.render_html reg None) children)
       in

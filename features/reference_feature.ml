@@ -29,9 +29,12 @@ let parse_inline (tokens : Lexer.token array) (pos : int)
         find_close (pos + 2)
     | _ -> None
 
-let render_html _reg _id = function
-  | ReferenceNode content ->
-      Some (Printf.sprintf "<a href=\"%s\">%s</a>" content content)
+let render_html (reg : Registry.t) _id = function
+  | ReferenceNode id ->
+      let label =
+        match Hashtbl.find_opt reg.references id with Some l -> l | None -> id
+      in
+      Some (Printf.sprintf "<a href=\"%s\">%s</a>" id label)
   | _ -> None
 
 let render_tex _ _ _ = failwith "not implemented"

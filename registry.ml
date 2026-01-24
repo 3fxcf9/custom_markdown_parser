@@ -6,6 +6,9 @@ type t = {
   mutable inline_parsers : parser_function list;
   mutable html_renderers : renderer_function list;
   mutable tex_renderers : renderer_function list;
+  mutable heading_position : int array;
+  mutable environment_count : (string, int) Hashtbl.t;
+  mutable references : (string, string) Hashtbl.t;
 }
 
 and parser_function =
@@ -47,6 +50,9 @@ let create_registry () : t =
       inline_parsers = [];
       html_renderers = [];
       tex_renderers = [];
+      heading_position = Array.make 7 0;
+      environment_count = Hashtbl.create 16;
+      references = Hashtbl.create 16;
     }
   in
 
