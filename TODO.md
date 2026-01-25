@@ -3,8 +3,6 @@
 - `image`
 - `inline_figure`
 - `footnote`
-- `def-prop` environment
-- add spacer to provide multiple arguments to an env (like exercise and solution), for example :::
 
 # DOING
 
@@ -24,7 +22,7 @@
   - `code_inline`
   - `compact_list`
   - `nbsp`
-  - `link` (fixed math, code, parenthesis, brackets)
+  - `reference` (fixed math, code, parenthesis, brackets)
   - `sidenote` (fixed math, code, parenthesis)
   - `bold` (fixed math, code)
   - `italic` (fixed math, code, brackets)

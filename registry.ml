@@ -9,6 +9,7 @@ type t = {
   mutable heading_position : int array;
   mutable environment_count : (string, int) Hashtbl.t;
   mutable references : (string, string) Hashtbl.t;
+  mutable figures : (string, string) Hashtbl.t;
 }
 
 and parser_function =
@@ -53,6 +54,7 @@ let create_registry () : t =
       heading_position = Array.make 7 0;
       environment_count = Hashtbl.create 16;
       references = Hashtbl.create 16;
+      figures = Hashtbl.create 16;
     }
   in
 

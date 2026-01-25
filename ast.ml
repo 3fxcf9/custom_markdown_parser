@@ -48,6 +48,7 @@ type node =
   | NbspNode of bool
   | StrikethroughNode of node list
   | UnderlineNode of node list
+  | ImageNode of string
   | ReferenceNode of string
   | ReferenceTagNode of string
 
@@ -80,6 +81,7 @@ let rec string_of_node node =
   | NbspNode _ -> "[NBSP]"
   | StrikethroughNode lst -> Printf.sprintf "[STRIKE:%s]" (string_of_nodes lst)
   | UnderlineNode lst -> Printf.sprintf "[UNDER:%s]" (string_of_nodes lst)
+  | ImageNode s -> Printf.sprintf "[IMAGE:%s]" s
   | ReferenceNode s -> Printf.sprintf "[REF:%s]" s
   | ReferenceTagNode s -> Printf.sprintf "[REF-TAG:%s]" s
 
