@@ -8,7 +8,7 @@ let parse_inline (tokens : Lexer.token array) (pos : int)
   if pos >= Array.length tokens then None
   else
     match tokens.(pos) with
-    | (Star | Underscore) as open_kind ->
+    | Underscore ->
         let rec find_close i count_math count_code count_bracket =
           if i >= Array.length tokens then None
           else
@@ -19,9 +19,8 @@ let parse_inline (tokens : Lexer.token array) (pos : int)
                 find_close (i + 1) (count_math + 1) count_code count_bracket
             | Lbracket | Rbracket ->
                 find_close (i + 1) count_math count_code (count_bracket + 1)
-            | k
-              when k = open_kind
-                   && count_math mod 2 = 0
+            | Underscore
+              when count_math mod 2 = 0
                    && count_code mod 2 = 0
                    && count_bracket mod 2 = 0 ->
                 let inner = Array.sub tokens (pos + 1) (i - pos - 1) in

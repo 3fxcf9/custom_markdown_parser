@@ -1,7 +1,5 @@
 # TODO
 
-- `image`
-- `inline_figure`
 - `footnote`
 
 # DOING
@@ -22,7 +20,9 @@
   - `code_inline`
   - `compact_list`
   - `nbsp`
-  - `reference` (fixed math, code, parenthesis, brackets)
+  - `image`
+  - `reference`
+  - `reference_tag`
   - `sidenote` (fixed math, code, parenthesis)
   - `bold` (fixed math, code)
   - `italic` (fixed math, code, brackets)
@@ -32,7 +32,6 @@
 
 # FIXES
 
-- bold = ** and italic = _
 - common base for feature (with fixes for math, code…)
 
 # IDEAS

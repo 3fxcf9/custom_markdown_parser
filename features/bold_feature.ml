@@ -8,17 +8,14 @@ let parse_inline (tokens : Lexer.token array) (pos : int)
   if pos + 1 >= Array.length tokens then None
   else
     match (tokens.(pos), tokens.(pos + 1)) with
-    | (Star as open_kind), Star | (Underscore as open_kind), Underscore ->
+    | Star, Star ->
         let rec find_close i count_math count_code =
           if i + 1 >= Array.length tokens then None
           else
             match (tokens.(i), tokens.(i + 1)) with
             | Backtick, _ -> find_close (i + 1) count_math (count_code + 1)
             | Dollar, _ -> find_close (i + 1) (count_math + 1) count_code
-            | k1, k2
-              when k1 = open_kind && k2 = open_kind
-                   && count_math mod 2 = 0
-                   && count_code mod 2 = 0 ->
+            | Star, Star when count_math mod 2 = 0 && count_code mod 2 = 0 ->
                 let inner = Array.sub tokens (pos + 2) (i - pos - 2) in
                 let content = Parser.parse_inlines reg inner in
                 Some (BoldNode content, i + 2 - pos)
