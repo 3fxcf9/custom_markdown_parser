@@ -6,4 +6,5 @@
 
 (executable
  (name main)
- (modules_without_implementation feature))
+ (modules_without_implementation feature)
+ (libraries yaml))

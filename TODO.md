@@ -1,6 +1,7 @@
 # TODO
 
 - `footnote`
+- `numbered compact list`
 
 # DOING
 
@@ -35,10 +36,3 @@
 - common base for feature (with fixes for math, code…)
 
 # IDEAS
-
-- Add metadata "environment", for example
-  ```md
-  :::
-  yaml / json here
-  :::
-  ```

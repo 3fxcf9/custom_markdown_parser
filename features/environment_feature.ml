@@ -45,7 +45,7 @@ let append_array_slice_to_rev_list arr start len acc_rev =
    Syntax: %Text(type) [rest-of-line-is-title] NEWLINE
    Returns Some (env_short, title_opt, pos_after_open_line) or None.
 *)
-let parse_env_open_line tokens pos =
+let parse_env_open_line tokens pos reg =
   let n = Array.length tokens in
   if pos >= n then None
   else
@@ -66,13 +66,9 @@ let parse_env_open_line tokens pos =
               in
               let next_pos, title_tokens = loop (pos + 2) in
               let title =
-                let s =
-                  Array.fold_left
-                    (fun acc t -> acc ^ Lexer.token_to_literal t)
-                    "" title_tokens
-                  |> String.trim
-                in
-                if s = "" then None else Some s
+                if Array.length title_tokens > 0 then
+                  Some (Parser.parse reg title_tokens)
+                else None
               in
               Some (name, title, next_pos)
           | _ -> None)
@@ -116,7 +112,7 @@ let parse_inline _ _ _ _ = None
 
 let parse_block (tokens : Lexer.token array) (pos : int)
     (_after_reference : bool) reg =
-  match parse_env_open_line tokens pos with
+  match parse_env_open_line tokens pos reg with
   | None -> None
   | Some (env_name, title_opt, after_open_pos) -> (
       (* collect content lines (allow blank lines) *)
@@ -138,24 +134,25 @@ let render_tex _ _ _ = None
 
 let render_html reg id = function
   | EnvironmentNode (env_short, title_opt, content_nodes) ->
-      let title_html =
+      let title_html_opt =
         match title_opt with
-        | None -> ""
-        | Some t -> Printf.sprintf "<div class=\"environment-title\">%s</div>" t
+        | None -> None
+        | Some t ->
+            Some (String.concat "" (List.map (Registry.render_html reg None) t))
       in
       let content_html =
         String.concat ""
           (List.map (Registry.render_html reg None) content_nodes)
       in
       let render_figure class_name =
-        if title_html <> "" then
-          Printf.sprintf
-            "<figure%s class=\"%s\">%s<figcaption>%s</figcaption></figure>" id
-            class_name content_html
-            (match title_opt with Some s -> s | None -> "")
-        else
-          Printf.sprintf "<figure%s class=\"%s\">%s</figure>" id class_name
-            content_html
+        match title_html_opt with
+        | Some t ->
+            Printf.sprintf
+              "<figure%s class=\"%s\">%s<figcaption>%s</figcaption></figure>" id
+              class_name content_html t
+        | None ->
+            Printf.sprintf "<figure%s class=\"%s\">%s</figure>" id class_name
+              content_html
       in
       let render_normal env =
         let translate_shortcut =
@@ -205,7 +202,7 @@ let render_html reg id = function
                      "method";
                      "notation";
                    ] -> (
-              match title_opt with
+              match title_html_opt with
               | Some t ->
                   Printf.sprintf
                     "<div class=\"environment-title\">%s — %s</div>"
@@ -228,20 +225,21 @@ let render_html reg id = function
         | "fig" -> render_figure ""
         | "lfig" -> render_figure "float-left"
         | "rfig" -> render_figure "float-right"
-        | "quote" ->
-            if title_html <> "" then
-              Printf.sprintf
-                "<div%s \
-                 class=\"blockquote\"><blockquote>%s</blockquote><cite>%s</cite></div>"
-                id content_html
-                (match title_opt with Some s -> s | None -> "")
-            else
-              Printf.sprintf
-                "<div%s class=\"blockquote\"><blockquote>%s</blockquote></div>"
-                id content_html
+        | "quote" -> (
+            match title_html_opt with
+            | Some t ->
+                Printf.sprintf
+                  "<div%s \
+                   class=\"blockquote\"><blockquote>%s</blockquote><cite>%s</cite></div>"
+                  id content_html t
+            | None ->
+                Printf.sprintf
+                  "<div%s \
+                   class=\"blockquote\"><blockquote>%s</blockquote></div>"
+                  id content_html)
         | "fold" ->
             let summary =
-              match title_opt with Some s -> s | None -> "View more"
+              match title_html_opt with Some s -> s | None -> "View more"
             in
             Printf.sprintf "<details%s>%s<summary>%s</summary></details>" id
               content_html summary

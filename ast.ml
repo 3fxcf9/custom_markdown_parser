@@ -30,12 +30,13 @@ let environment_display_name environment_name =
 (* type node = .. *)
 (* type node += TextNode of string | ParagraphNode of node list *)
 type node =
+  | EmptyNode
   | TextNode of string
   | ParagraphNode of node list
   | BoldNode of node list
   | CodeBlockNode of string option * string
   | CodeInlineNode of string
-  | EnvironmentNode of string * string option * node list
+  | EnvironmentNode of string * node list option * node list
   | FootnoteNode of node list
   | HeadingNode of int * node list
   | HighlightNode of node list
@@ -54,6 +55,7 @@ type node =
 
 let rec string_of_node node =
   match node with
+  | EmptyNode -> Printf.sprintf "[NONE]"
   | TextNode s -> Printf.sprintf "[TEXT:%s]" s
   | ParagraphNode lst -> Printf.sprintf "[PARA:%s]" (string_of_nodes lst)
   | BoldNode lst -> Printf.sprintf "[BOLD:%s]" (string_of_nodes lst)
@@ -63,8 +65,12 @@ let rec string_of_node node =
       | None -> Printf.sprintf "[CODEBLOCK:%s]" code)
   | CodeInlineNode code -> Printf.sprintf "[CODE:%s]" code
   | EnvironmentNode (name, opt_arg, content) ->
-      let opt_str = match opt_arg with Some s -> s | None -> "_" in
-      Printf.sprintf "[ENV:%s(%s):%s]" name opt_str (string_of_nodes content)
+      let opt_nodes =
+        match opt_arg with Some s -> s | None -> [ EmptyNode ]
+      in
+      Printf.sprintf "[ENV:%s(%s):%s]" name
+        (string_of_nodes opt_nodes)
+        (string_of_nodes content)
   | FootnoteNode lst -> Printf.sprintf "[FOOT:%s]" (string_of_nodes lst)
   | HeadingNode (level, lst) ->
       Printf.sprintf "[HEAD%d:%s]" level (string_of_nodes lst)

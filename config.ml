@@ -16,6 +16,7 @@ let build_registry () =
   (* Parsing order: last to first *)
   let features : (module Feature.FEATURE) list =
     [
+      (module Metadata_feature);
       (module Nbsp_feature);
       (module Italic_feature);
       (module Bold_feature);

@@ -10,6 +10,7 @@ type t = {
   mutable environment_count : (string, int) Hashtbl.t;
   mutable references : (string, string) Hashtbl.t;
   mutable figures : (string, string) Hashtbl.t;
+  mutable metadata : Yaml.value option;
 }
 
 and parser_function =
@@ -40,6 +41,7 @@ let rec render_document (reg : t) (doc : node list) : string =
   match doc with
   | ReferenceTagNode next_id :: hd :: tl ->
       render_html reg (Some next_id) hd ^ render_document reg tl
+  | EmptyNode :: tl -> render_document reg tl
   | hd :: tl -> render_html reg None hd ^ render_document reg tl
   | _ -> ""
 
@@ -55,6 +57,7 @@ let create_registry () : t =
       environment_count = Hashtbl.create 16;
       references = Hashtbl.create 16;
       figures = Hashtbl.create 16;
+      metadata = None;
     }
   in
 

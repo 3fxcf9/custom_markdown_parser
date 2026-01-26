@@ -34,7 +34,7 @@ let render_html (reg : Registry.t) _id = function
       let label =
         match Hashtbl.find_opt reg.references id with Some l -> l | None -> id
       in
-      Some (Printf.sprintf "<a href=\"%s\">%s</a>" id label)
+      Some (Printf.sprintf "<a href=\"#%s\">%s</a>" id label)
   | _ -> None
 
 let render_tex _ _ _ = failwith "not implemented"
