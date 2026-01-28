@@ -2,6 +2,7 @@
 
 - `footnote`
 - `numbered compact list`
+- `recall` environment
 
 # DOING
 

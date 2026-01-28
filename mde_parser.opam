@@ -1,0 +1,25 @@
+opam-version: "2.0"
+name: "mde_parser"
+version: "0.1.0"
+
+synopsis: "An extensible OCaml parser for a Markdown-inspired markup language"
+description: """
+An extensible OCaml parser for a Markdown-inspired markup language
+"""
+
+maintainer: "123954477+3fxcf9@users.noreply.github.com"
+authors: [ "3fxcf9" ]
+license: "MIT"
+homepage: "https://github.com/3fxcf9/custom_markdown_parser"
+bug-reports: "https://github.com/3fxcf9/custom_markdown_parser/issues"
+dev-repo: "git+https://github.com/3fxcf9/custom_markdown_parser.git"
+
+depends: [
+  "ocaml" {>= "4.14.0"}
+  "dune"  {>= "3.0"}
+  "yaml"
+]
+
+build: [
+  ["dune" "build" "-j" jobs]
+]

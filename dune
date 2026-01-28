@@ -1,10 +1,13 @@
 (include_subdirs unqualified)
 
-; (library
-;  (name markdown)
-;  (modules_without_implementation feature))
+(library
+ (name mde_parser)
+ (public_name mde_parser)
+ (modules mde_parser Ast Config Lexer Parser Registry Heading_labels Roman Feature Bold_feature Code_block Code_inline Compact_list_feature Environment_feature Footnote_feature Heading_feature Heading_feature Highlight_feature Hrule_feature Image_feature Italic_feature Link_feature List_feature Math_display Math_inline Metadata_feature Nbsp_feature Reference_feature Reference_tag_feature Strikethrough_feature Underline_feature)  ;; list ALL library modules here
+ (modules_without_implementation feature)
+ (libraries yaml))
 
 (executable
  (name main)
- (modules_without_implementation feature)
- (libraries yaml))
+ (modules main)
+ (libraries mde_parser))
