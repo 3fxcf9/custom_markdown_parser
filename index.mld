@@ -1,0 +1,50 @@
+{0 MDE Parser}
+
+An extensible OCaml parser for a Markdown-inspired markup language
+
+{1 Core Logic}
+The primary orchestration layer, lexer, and parser.
+
+{!modules:
+Mde_parser
+Ast
+Parser
+Lexer
+Config
+Registry
+}
+
+{1 Features}
+Implementations of MDE elements.
+
+{!modules:
+Bold_feature
+Code_block
+Code_inline
+Compact_list_feature
+Environment_feature
+Sidenote_feature
+Heading_feature
+Highlight_feature
+Hrule_feature
+Image_feature
+Italic_feature
+Link_feature
+List_feature
+Math_display
+Math_inline
+Metadata_feature
+Nbsp_feature
+Reference_feature
+Reference_tag_feature
+Strikethrough_feature
+Underline_feature
+}
+
+{1 Utilities}
+Internal helpers.
+
+{!modules:
+Heading_labels
+Roman
+}

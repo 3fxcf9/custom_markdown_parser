@@ -1,5 +1,9 @@
+(** Feature registration and initialization. *)
+
 open Registry
 
+(** [init_feature reg feature] Hooks a feature's parsers and renderers into the
+    registry. *)
 let init_feature (registry : Registry.t) (feature : (module Feature.FEATURE)) =
   let module F = (val feature : Feature.FEATURE) in
   registry.paragraph_stop_conditions <-
@@ -11,6 +15,8 @@ let init_feature (registry : Registry.t) (feature : (module Feature.FEATURE)) =
   registry.html_renderers <- F.render_html :: registry.html_renderers;
   registry.tex_renderers <- F.render_tex :: registry.tex_renderers
 
+(** [build_registry ()] Creates a registry and registers all standard features
+    in priority order. *)
 let build_registry () =
   let reg = Registry.create_registry () in
   (* Parsing order: last to first *)
@@ -33,7 +39,7 @@ let build_registry () =
       (module Compact_list_feature);
       (module Environment_feature);
       (module Heading_feature);
-      (module Footnote_feature);
+      (module Sidenote_feature);
       (module Link_feature);
       (module Image_feature);
       (module Reference_feature);

@@ -1,3 +1,5 @@
+(** Central configuration for the parser and renderer. *)
+
 open Ast
 
 type t = {
@@ -20,7 +22,8 @@ and paragraph_stop_condition = Lexer.token array -> int -> bool -> t -> bool
 and renderer_function = t -> string -> node -> string option
 (* render reg id_string (empty or id="something") node *)
 
-(* Renderer.  TODO: Split *)
+(** [render_html reg id node] Renders a node with the first compatible
+    registered HTML renderer. *)
 let render_html (reg : t) (id : string option) node : string =
   let id_string =
     match id with Some s -> Printf.sprintf " id=\"%s\"" s | None -> ""
@@ -34,10 +37,14 @@ let render_html (reg : t) (id : string option) node : string =
   in
   try_renderer reg.html_renderers
 
+(** TODO: [render_tex reg id node] Renders a node with the first compatible
+    registered Tex renderer. *)
 let render_tex _ _ = ""
 
-(* FIXME: Handle two consecutive referenceNode *)
+(** [render_document reg doc] Converts a list of AST nodes into a full HTML
+    string. *)
 let rec render_document (reg : t) (doc : node list) : string =
+  (* FIXME: Handle two consecutive referenceNode *)
   match doc with
   | ReferenceTagNode next_id :: hd :: tl ->
       render_html reg (Some next_id) hd ^ render_document reg tl
@@ -45,6 +52,8 @@ let rec render_document (reg : t) (doc : node list) : string =
   | hd :: tl -> render_html reg None hd ^ render_document reg tl
   | _ -> ""
 
+(** [create_registry ()] Initializes a registry with default paragraph and text
+    renderers. *)
 let create_registry () : t =
   let registry : t =
     {
@@ -65,7 +74,8 @@ let create_registry () : t =
   registry.paragraph_stop_conditions <-
     [
       (fun tokens pos _after_reference _ ->
-        if pos + 1 < Array.length tokens then
+        if pos + 1 < Array.length tokens
+        then
           match (tokens.(pos), tokens.(pos + 1)) with
           | Newline, Newline -> true
           | _ -> false

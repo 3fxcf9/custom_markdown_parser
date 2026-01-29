@@ -7,7 +7,8 @@ let values =
   let len = Array.length letters in
   let t = Array.make len 1 in
   let rec iter i =
-    if i >= 0 then (
+    if i >= 0
+    then (
       let factor = if i mod 2 = 0 then 2 else 5 in
       t.(i) <- t.(i + 1) * factor;
       iter (i - 1))
@@ -25,7 +26,8 @@ let to_roman n =
   (* iter from the highest letter to the lowest *)
   let rec iter n i =
     (* stop if we reached the end of the letters *)
-    if i < len then (
+    if i < len
+    then (
       (* get the value associated to the current letter *)
       let v = values.(i) in
       (* compute how many of the current letter we must print ;
@@ -41,7 +43,8 @@ let to_roman n =
       let n =
         (* if this lower letter exists and n is between the
              current letter and current letter - the lower letter ... *)
-        if prev < len && n >= v - values.(prev) then (
+        if prev < len && n >= v - values.(prev)
+        then (
           (* ... then print the lower letter and the current letter,
                like in "XC" for 90 *)
           Printf.bprintf b "%c%c" letters.(prev) letters.(i);

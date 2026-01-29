@@ -1,0 +1,3 @@
+profile=conventional
+exp-grouping=preserve
+if-then-else=keyword-first

@@ -4,12 +4,14 @@ open Lexer
 let parse_block (tokens : Lexer.token array) (pos : int)
     (_after_reference : bool) _reg =
   let n = Array.length tokens in
-  if pos + 1 >= n then None
+  if pos + 1 >= n
+  then None
   else
     match (tokens.(pos), tokens.(pos + 1)) with
     | Dollar, Dollar ->
         let rec find_close i =
-          if i + 1 >= n then None
+          if i + 1 >= n
+          then None
           else
             match (tokens.(i), tokens.(i + 1)) with
             | Dollar, Dollar ->

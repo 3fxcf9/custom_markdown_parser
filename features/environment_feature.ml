@@ -31,7 +31,8 @@ let gather_line (tokens : Lexer.token array) (pos : int) :
   let n = Array.length tokens in
   let rec loop i = if i >= n || tokens.(i) = Newline then i else loop (i + 1) in
   let i = loop pos in
-  if i >= n then (Array.sub tokens pos (i - pos), i - pos)
+  if i >= n
+  then (Array.sub tokens pos (i - pos), i - pos)
   else (Array.sub tokens pos (i - pos + 1), i - pos + 1)
 
 (* Append an array slice [start..start+len-1] to a rev-list of tokens *)
@@ -47,17 +48,20 @@ let append_array_slice_to_rev_list arr start len acc_rev =
 *)
 let parse_env_open_line tokens pos reg =
   let n = Array.length tokens in
-  if pos >= n then None
+  if pos >= n
+  then None
   else
     match tokens.(pos) with
     | Percent -> (
-        if pos + 1 >= n then None
+        if pos + 1 >= n
+        then None
         else
           match tokens.(pos + 1) with
           | Text name when List.mem name allowed_envs ->
               (* collect until newline *)
               let rec loop i =
-                if i >= n then (i, [||])
+                if i >= n
+                then (i, [||])
                 else
                   match tokens.(i) with
                   | Newline ->
@@ -66,8 +70,8 @@ let parse_env_open_line tokens pos reg =
               in
               let next_pos, title_tokens = loop (pos + 2) in
               let title =
-                if Array.length title_tokens > 0 then
-                  Some (Parser.parse reg title_tokens)
+                if Array.length title_tokens > 0
+                then Some (Parser.parse reg title_tokens)
                 else None
               in
               Some (name, title, next_pos)
@@ -76,20 +80,22 @@ let parse_env_open_line tokens pos reg =
 
 let rec collect_indented_lines tokens pos indent_min acc_rev =
   let n = Array.length tokens in
-  if pos >= n then (acc_rev, pos)
+  if pos >= n
+  then (acc_rev, pos)
   else
     match tokens.(pos) with
     | Indent lvl when lvl >= indent_min ->
         let line_arr, consumed = gather_line tokens pos in
-        if Array.length line_arr = 0 then
-          collect_indented_lines tokens (pos + consumed) indent_min acc_rev
+        if Array.length line_arr = 0
+        then collect_indented_lines tokens (pos + consumed) indent_min acc_rev
         else
           (* adjust leading indent token if present *)
           let adjusted_list =
             match line_arr.(0) with
             | Indent lvl when lvl >= indent_min ->
                 let new_lvl = lvl - indent_min in
-                if new_lvl > 0 then (
+                if new_lvl > 0
+                then (
                   let a = Array.copy line_arr in
                   a.(0) <- Indent new_lvl;
                   Array.to_list a)

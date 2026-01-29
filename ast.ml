@@ -1,7 +1,9 @@
+(** Abstract Syntax Tree nodes and utilities. *)
+
 type hr_kind = Compact | Solid | Dashed | Sawteeth
 type list_type = Ordered | Dash | Star | Plus | Compact
 
-let translate_shortcut_fr =
+let translate_environment_names =
   [
     ("thm", "théorème");
     ("prop", "proposition");
@@ -23,12 +25,12 @@ let translate_shortcut_fr =
     ("callout", "encadré");
   ]
 
+(** [environment_display_name name] Translates internal environment tags to
+    French labels (e.g., "thm" to "théorème"). *)
 let environment_display_name environment_name =
-  try List.assoc environment_name translate_shortcut_fr
+  try List.assoc environment_name translate_environment_names
   with _ -> environment_name
 
-(* type node = .. *)
-(* type node += TextNode of string | ParagraphNode of node list *)
 type node =
   | EmptyNode
   | TextNode of string
@@ -37,7 +39,7 @@ type node =
   | CodeBlockNode of string option * string
   | CodeInlineNode of string
   | EnvironmentNode of string * node list option * node list
-  | FootnoteNode of node list
+  | SidenoteNode of node list
   | HeadingNode of int * node list
   | HighlightNode of node list
   | HRuleNode of hr_kind
@@ -52,6 +54,10 @@ type node =
   | ImageNode of string
   | ReferenceNode of string
   | ReferenceTagNode of string
+
+(** {1:internal Internal Utilities}
+    The following functions are used for debugging and are not required for
+    general use. *)
 
 let rec string_of_node node =
   match node with
@@ -71,7 +77,7 @@ let rec string_of_node node =
       Printf.sprintf "[ENV:%s(%s):%s]" name
         (string_of_nodes opt_nodes)
         (string_of_nodes content)
-  | FootnoteNode lst -> Printf.sprintf "[FOOT:%s]" (string_of_nodes lst)
+  | SidenoteNode lst -> Printf.sprintf "[SIDE:%s]" (string_of_nodes lst)
   | HeadingNode (level, lst) ->
       Printf.sprintf "[HEAD%d:%s]" level (string_of_nodes lst)
   | HighlightNode lst -> Printf.sprintf "[HILITE:%s]" (string_of_nodes lst)
@@ -93,5 +99,6 @@ let rec string_of_node node =
 
 and string_of_nodes lst = String.concat " " (List.map string_of_node lst)
 
+(** [debug_nodes nodes] Prints a string representation of the AST to stdout. *)
 let debug_nodes nodes =
   nodes |> List.map string_of_node |> String.concat "\n" |> print_endline

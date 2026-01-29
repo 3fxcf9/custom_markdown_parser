@@ -9,7 +9,8 @@ let gather_line (tokens : Lexer.token array) (pos : int) :
   let n = Array.length tokens in
   let rec loop i = if i >= n || tokens.(i) = Newline then i else loop (i + 1) in
   let i = loop pos in
-  if i >= n then (Array.sub tokens pos (i - pos), i - pos)
+  if i >= n
+  then (Array.sub tokens pos (i - pos), i - pos)
   else (Array.sub tokens pos (i - pos + 1), i - pos + 1)
 
 let is_digits s =
@@ -23,10 +24,12 @@ let token_is_space = function Space -> true | _ -> false
 let is_list_item (tokens : Lexer.token array) (pos : int)
     (after_reference : bool) : bool =
   (* must be at start of a line *)
-  if pos > 0 && tokens.(pos - 1) <> Newline && not after_reference then false
+  if pos > 0 && tokens.(pos - 1) <> Newline && not after_reference
+  then false
   else
     let n = Array.length tokens in
-    if pos + 1 >= n then false
+    if pos + 1 >= n
+    then false
     else
       match (tokens.(pos), tokens.(pos + 1)) with
       | Dash, Space | Star, Space | Plus, Space | Tilde, Space -> true
@@ -36,7 +39,8 @@ let is_list_item (tokens : Lexer.token array) (pos : int)
 let is_compatible_list_item (tokens : Lexer.token array) (pos : int)
     (open_tok : Lexer.token) (next_numbered_index : int) : bool =
   let n = Array.length tokens in
-  if pos >= n then false
+  if pos >= n
+  then false
   else
     match (open_tok, tokens.(pos)) with
     | Text _, Text s ->
@@ -62,20 +66,22 @@ let append_array_slice_to_rev_list arr start len acc_rev =
 
 let rec collect_indented_lines tokens pos indent_min acc_rev =
   let n = Array.length tokens in
-  if pos >= n then (acc_rev, pos)
+  if pos >= n
+  then (acc_rev, pos)
   else
     match tokens.(pos) with
     | Indent lvl when lvl >= indent_min ->
         let line_arr, consumed = gather_line tokens pos in
-        if Array.length line_arr = 0 then
-          collect_indented_lines tokens (pos + consumed) indent_min acc_rev
+        if Array.length line_arr = 0
+        then collect_indented_lines tokens (pos + consumed) indent_min acc_rev
         else
           (* adjust leading indent token if present *)
           let adjusted_list =
             match line_arr.(0) with
             | Indent lvl when lvl >= indent_min ->
                 let new_lvl = lvl - indent_min in
-                if new_lvl > 0 then (
+                if new_lvl > 0
+                then (
                   let a = Array.copy line_arr in
                   a.(0) <- Indent new_lvl;
                   Array.to_list a)
@@ -100,7 +106,8 @@ let parse_single_item tokens pos open_tok reg =
   let first_len = Array.length first_line_arr in
   (* acc_rev: list containing all the tokens *inside* the list item in reverse order (with updated indent) *)
   let acc_rev =
-    if prefix_len < first_len then
+    if prefix_len < first_len
+    then
       append_array_slice_to_rev_list first_line_arr prefix_len
         (first_len - prefix_len) []
     else []
@@ -111,7 +118,8 @@ let parse_single_item tokens pos open_tok reg =
   in
   let item_tokens = List.rev acc_rev' |> Array.of_list in
   let parsed =
-    if Array.length item_tokens = 0 then []
+    if Array.length item_tokens = 0
+    then []
     else
       match open_tok with
       | Tilde -> Parser.parse_inlines reg item_tokens
@@ -123,8 +131,8 @@ let parse_single_item tokens pos open_tok reg =
    returns (items_parsed_list, pos_after_items)
 *)
 let rec parse_items tokens pos open_tok next_numbered_index reg acc =
-  if not (is_compatible_list_item tokens pos open_tok next_numbered_index) then
-    (List.rev acc, pos)
+  if not (is_compatible_list_item tokens pos open_tok next_numbered_index)
+  then (List.rev acc, pos)
   else
     let item_parsed, next_pos = parse_single_item tokens pos open_tok reg in
     parse_items tokens next_pos open_tok (next_numbered_index + 1) reg
@@ -134,7 +142,8 @@ let parse_inline _ _ _ _ = None
 
 let parse_block (tokens : Lexer.token array) (pos : int)
     (after_reference : bool) reg =
-  if not (is_list_item tokens pos after_reference) then None
+  if not (is_list_item tokens pos after_reference)
+  then None
   else
     let open_tok = tokens.(pos) in
     let ltype =
@@ -197,7 +206,8 @@ let render_tex reg _id = function
               let lines = String.split_on_char '\n' rendered in
               List.iteri
                 (fun li line ->
-                  if li = 0 then Buffer.add_string buf (line ^ "\n")
+                  if li = 0
+                  then Buffer.add_string buf (line ^ "\n")
                   else Buffer.add_string buf ("        " ^ line ^ "\n"))
                 lines)
             item_children;

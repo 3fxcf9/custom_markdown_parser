@@ -15,7 +15,8 @@ let min_count (hr_type : hr_kind) =
 (* Number of tokens to consume INCLUDING newline *)
 let is_hrule_line tokens pos =
   let n = Array.length tokens in
-  if pos >= n then None
+  if pos >= n
+  then None
   else
     match hr_kind_of_token tokens.(pos) with
     | None -> None
@@ -25,8 +26,10 @@ let is_hrule_line tokens pos =
           incr i
         done;
         let count = !i - pos in
-        if count < min_count kind then None
-        else if !i < n && tokens.(!i) = Newline then Some (kind, count + 1)
+        if count < min_count kind
+        then None
+        else if !i < n && tokens.(!i) = Newline
+        then Some (kind, count + 1)
         else None
 
 let parse_block (tokens : Lexer.token array) (pos : int)

@@ -5,12 +5,14 @@ let parse_block _ _ _ _ = None
 
 let parse_inline (tokens : Lexer.token array) (pos : int)
     (_after_reference : bool) reg =
-  if pos + 1 >= Array.length tokens then None
+  if pos + 1 >= Array.length tokens
+  then None
   else
     match (tokens.(pos), tokens.(pos + 1)) with
     | Star, Star ->
         let rec find_close i count_math count_code =
-          if i + 1 >= Array.length tokens then None
+          if i + 1 >= Array.length tokens
+          then None
           else
             match (tokens.(i), tokens.(i + 1)) with
             | Backtick, _ -> find_close (i + 1) count_math (count_code + 1)

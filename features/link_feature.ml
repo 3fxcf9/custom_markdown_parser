@@ -8,7 +8,8 @@ let parse_url tokens pos =
   | Lparen ->
       let rec find_close i count_math count_code count_parenthesis
           count_brackets =
-        if i >= Array.length tokens then None
+        if i >= Array.length tokens
+        then None
         else
           match tokens.(i) with
           | Backtick ->
@@ -51,13 +52,15 @@ let parse_url tokens pos =
 
 let parse_inline (tokens : Lexer.token array) (pos : int)
     (_after_reference : bool) reg =
-  if pos + 3 >= Array.length tokens then None
+  if pos + 3 >= Array.length tokens
+  then None
   else
     match tokens.(pos) with
     | Lbracket ->
         let rec find_close i count_math count_code count_parenthesis
             count_brackets =
-          if i >= Array.length tokens then None
+          if i >= Array.length tokens
+          then None
           else
             match tokens.(i) with
             | Backtick ->

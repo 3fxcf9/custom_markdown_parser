@@ -1,3 +1,5 @@
+(** Block and inline parsing logic. *)
+
 open Registry
 open Lexer
 open Ast
@@ -36,6 +38,8 @@ let get_tag node reg =
            heading_tag environment_count)
   | _ -> None
 
+(** [update_position node reg] Increments internal counters for headings and
+    environments. *)
 let update_position node reg =
   match node with
   | HeadingNode (l, _) ->
@@ -51,6 +55,8 @@ let update_position node reg =
       Hashtbl.replace reg.environment_count name new_count
   | _ -> ()
 
+(** [parse_inlines reg tokens] Parses a slice of tokens specifically for inline
+    elements (bold, link, etc.). *)
 let parse_inlines (reg : Registry.t) (tokens : Lexer.token array) :
     Ast.node list =
   let acc = ref [] in
@@ -74,6 +80,7 @@ let parse_inlines (reg : Registry.t) (tokens : Lexer.token array) :
   done;
   List.rev !acc
 
+(** [parse reg tokens] Parses an array of tokens into a block-level AST. *)
 let parse (reg : Registry.t) (tokens : Lexer.token array) : Ast.node list =
   let acc = ref [] in
   let i = ref 0 in
@@ -84,7 +91,8 @@ let parse (reg : Registry.t) (tokens : Lexer.token array) : Ast.node list =
   while !i < n do
     match try_parsers reg.block_parsers tokens !i !after_reference reg with
     | Some (node, consumed) ->
-        (if !after_reference then
+        (if !after_reference
+         then
            match get_tag node reg with
            | Some s -> Hashtbl.replace reg.references !reference_id s
            | None -> ());
@@ -101,7 +109,8 @@ let parse (reg : Registry.t) (tokens : Lexer.token array) : Ast.node list =
         (* fallback: collect tokens for a paragraph until a stop_condition is reached *)
         let start = !i in
         let rec advance () =
-          if !i >= n then ()
+          if !i >= n
+          then ()
           else
             (* stop on a single newline or on a stop_condition *)
             match tokens.(!i) with
@@ -117,15 +126,18 @@ let parse (reg : Registry.t) (tokens : Lexer.token array) : Ast.node list =
                   advance ())
         in
         advance ();
-        if start <> !i then
+        if start <> !i
+        then
           let len = !i - start in
-          if len > 0 then
+          if len > 0
+          then
             let slice = Array.sub tokens start len in
-            if not (is_blank_tokens slice) then (
+            if not (is_blank_tokens slice)
+            then (
               let inline_nodes = parse_inlines reg slice in
               acc := ParagraphNode inline_nodes :: !acc;
               (* skip newline (line skip handled above) *)
-              if !i < n then
-                match tokens.(!i) with Newline -> i := !i + 1 | _ -> ())
+              if !i < n
+              then match tokens.(!i) with Newline -> i := !i + 1 | _ -> ())
   done;
   List.rev !acc

@@ -8,12 +8,15 @@ let parse_inline _ _ _ _ = None
 let parse_block (tokens : Lexer.token array) (pos : int)
     (_after_reference : bool) reg =
   let n = Array.length tokens in
-  if pos + 1 >= n then None
-  else if tokens.(pos) <> Tilde || tokens.(pos + 1) <> Space then None
+  if pos + 1 >= n
+  then None
+  else if tokens.(pos) <> Tilde || tokens.(pos + 1) <> Space
+  then None
   else
     (* collect tokens until newline *)
     let rec collect i acc =
-      if i >= n || tokens.(i) = Newline then (List.rev acc, i)
+      if i >= n || tokens.(i) = Newline
+      then (List.rev acc, i)
       else collect (i + 1) (tokens.(i) :: acc)
     in
     let content_tokens, stop_pos = collect (pos + 2) [] in
@@ -21,8 +24,8 @@ let parse_block (tokens : Lexer.token array) (pos : int)
 
     (* split on "  ~ " *)
     let rec split acc current i =
-      if i >= Array.length arr then
-        List.rev (Array.of_list (List.rev current) :: acc)
+      if i >= Array.length arr
+      then List.rev (Array.of_list (List.rev current) :: acc)
       else if
         i + 3 < Array.length arr
         && arr.(i) = Space

@@ -5,12 +5,14 @@ let parse_block _ _ _ _ = None
 
 let parse_inline (tokens : Lexer.token array) (pos : int)
     (_after_reference : bool) reg =
-  if pos + 1 >= Array.length tokens then None
+  if pos + 1 >= Array.length tokens
+  then None
   else
     match (tokens.(pos), tokens.(pos + 1)) with
     | Lparen, Lparen ->
         let rec find_close i count_math count_code count_paren =
-          if i + 1 >= Array.length tokens then None
+          if i + 1 >= Array.length tokens
+          then None
           else
             match (tokens.(i), tokens.(i + 1)) with
             | Backtick, _ ->
@@ -23,7 +25,7 @@ let parse_inline (tokens : Lexer.token array) (pos : int)
                    && count_paren mod 2 = 0 ->
                 let inner = Array.sub tokens (pos + 2) (i - pos - 2) in
                 let content = Parser.parse_inlines reg inner in
-                Some (FootnoteNode content, i + 2 - pos)
+                Some (SidenoteNode content, i + 2 - pos)
             | Lparen, _ | Rparen, _ ->
                 find_close (i + 1) count_math count_code (count_paren + 1)
             | _ -> find_close (i + 1) count_math count_code count_paren
@@ -32,7 +34,7 @@ let parse_inline (tokens : Lexer.token array) (pos : int)
     | _ -> None
 
 let render_html reg id = function
-  | FootnoteNode children ->
+  | SidenoteNode children ->
       Some
         (Printf.sprintf
            "<span class=\"sidenote-number\"><small%s \

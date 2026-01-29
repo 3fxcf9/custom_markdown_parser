@@ -5,12 +5,14 @@ let parse_block _ _ _ _ = None
 
 let parse_inline (tokens : Lexer.token array) (pos : int)
     (_after_reference : bool) _reg =
-  if pos + 1 >= Array.length tokens then None
+  if pos + 1 >= Array.length tokens
+  then None
   else
     match (tokens.(pos), tokens.(pos + 1)) with
     | Hash, Lbracket ->
         let rec find_close i =
-          if i >= Array.length tokens then None
+          if i >= Array.length tokens
+          then None
           else
             match tokens.(i) with
             | Rbracket ->
@@ -20,7 +22,9 @@ let parse_inline (tokens : Lexer.token array) (pos : int)
                     (fun acc t ->
                       acc
                       ^
-                      match Lexer.token_to_literal t with " " -> "-" | e -> e)
+                      match Lexer.token_to_literal t with
+                      | " " -> "-"
+                      | e -> e)
                     "" inner
                 in
                 Some (ReferenceNode content, i - pos + 2)

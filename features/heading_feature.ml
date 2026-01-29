@@ -4,7 +4,8 @@ open Lexer
 let parse_inline _ _ _ _ = None
 
 let rec count_hash tokens pos =
-  if pos >= Array.length tokens then 0
+  if pos >= Array.length tokens
+  then 0
   else
     match tokens.(pos) with Hash -> 1 + count_hash tokens (pos + 1) | _ -> 0
 
@@ -14,17 +15,20 @@ let gather_line (tokens : Lexer.token array) (pos : int) :
   let n = Array.length tokens in
   let rec loop i = if i >= n || tokens.(i) = Newline then i else loop (i + 1) in
   let i = loop pos in
-  if i >= n then (Array.sub tokens pos (i - pos), i - pos)
+  if i >= n
+  then (Array.sub tokens pos (i - pos), i - pos)
   else (Array.sub tokens pos (i - pos + 1), i - pos + 1)
 
 let parse_block (tokens : Lexer.token array) (pos : int)
     (after_reference : bool) reg =
-  if pos > 0 && tokens.(pos - 1) <> Newline && not after_reference then None
+  if pos > 0 && tokens.(pos - 1) <> Newline && not after_reference
+  then None
   else
     match count_hash tokens pos with
     | l when l >= 1 && l <= 6 -> (
         let n = Array.length tokens in
-        if pos + l >= n then None
+        if pos + l >= n
+        then None
         else
           match tokens.(pos + l) with
           | Space ->
