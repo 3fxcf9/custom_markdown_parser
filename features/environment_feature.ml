@@ -71,7 +71,7 @@ let parse_env_open_line tokens pos reg =
               let next_pos, title_tokens = loop (pos + 2) in
               let title =
                 if Array.length title_tokens > 0
-                then Some (Parser.parse reg title_tokens)
+                then Some (Parser.parse_inlines reg title_tokens)
                 else None
               in
               Some (name, title, next_pos)
