@@ -29,7 +29,7 @@ let rec repeat s = function 1 -> s | n -> s ^ repeat s (n - 1)
 
 let add_to_toc reg level id heading_html =
   let f (first : bool) (last : int) (html : string) =
-    let link_html = Printf.sprintf "<a href=\"%s\">%s</a>" id heading_html in
+    let link_html = Printf.sprintf "<a href=\"#%s\">%s</a>" id heading_html in
     if level < 2
     then (true, last, html)
     else if level > last
