@@ -13,6 +13,8 @@ type t = {
   mutable references : (string, string) Hashtbl.t;
   mutable figures : (string, string) Hashtbl.t;
   mutable metadata : Yaml.value option;
+  mutable toc_setters : (bool -> int -> string -> bool * int * string) list;
+  mutable update_toc : string -> unit;
 }
 
 and parser_function =
@@ -22,11 +24,50 @@ and paragraph_stop_condition = Lexer.token array -> int -> bool -> t -> bool
 and renderer_function = t -> string -> node -> string option
 (* render reg id_string (empty or id="something") node *)
 
+(* TODO: Sketchy solution *)
+let rec repeat s = function 1 -> s | n -> s ^ repeat s (n - 1)
+
+let add_to_toc reg level id heading_html =
+  let f (first : bool) (last : int) (html : string) =
+    let link_html = Printf.sprintf "<a href=\"%s\">%s</a>" id heading_html in
+    if level < 2
+    then (true, last, html)
+    else if level > last
+    then
+      let html = if first then html ^ "<li>" else html in
+      ( false,
+        level,
+        html
+        ^ Printf.sprintf "%s%s" (repeat "<ol>\n<li>" (level - last)) link_html
+      )
+    else if level < last
+    then
+      let close =
+        if last - level > 1 then repeat "</li></ol>" (last - level - 1) else ""
+      in
+      ( false,
+        level,
+        html ^ Printf.sprintf "%s</li></ol></li>\n<li>%s" close link_html )
+    else if first
+    then (false, level, html ^ Printf.sprintf "\n<li>%s" link_html)
+    else (false, level, html ^ Printf.sprintf "</li>\n<li>%s" link_html)
+  in
+  reg.toc_setters <- f :: reg.toc_setters
+
 (** [render_html reg id node] Renders a node with the first compatible
     registered HTML renderer. *)
 let render_html (reg : t) (id : string option) node : string =
   let id_string =
-    match id with Some s -> Printf.sprintf " id=\"%s\"" s | None -> ""
+    match (id, node) with
+    | Some s, HeadingNode (level, _, _) ->
+        reg.update_toc <- add_to_toc reg level s;
+        Printf.sprintf " id=\"%s\"" s
+    | Some s, _ -> Printf.sprintf " id=\"%s\"" s
+    | None, HeadingNode (level, _, pos) ->
+        let id = Digest.string pos |> Digest.to_hex in
+        reg.update_toc <- add_to_toc reg level id;
+        Printf.sprintf " id=\"%s\"" id
+    | _ -> ""
   in
   let rec try_renderer = function
     | [] -> failwith "No renderer found"
@@ -67,6 +108,8 @@ let create_registry () : t =
       references = Hashtbl.create 16;
       figures = Hashtbl.create 16;
       metadata = None;
+      toc_setters = [];
+      update_toc = (fun _ -> ());
     }
   in
 

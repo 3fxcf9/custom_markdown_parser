@@ -21,5 +21,16 @@ depends: [
 ]
 
 build: [
-  ["dune" "build" "-j" jobs]
+  ["dune" "subst"] {dev}
+  [
+    "dune"
+    "build"
+    "-p"
+    name
+    "-j"
+    jobs
+    "@install"
+    "@runtest" {with-test}
+    "@doc" {with-doc}
+  ]
 ]

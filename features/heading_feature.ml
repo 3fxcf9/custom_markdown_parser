@@ -20,7 +20,7 @@ let gather_line (tokens : Lexer.token array) (pos : int) :
   else (Array.sub tokens pos (i - pos + 1), i - pos + 1)
 
 let parse_block (tokens : Lexer.token array) (pos : int)
-    (after_reference : bool) reg =
+    (after_reference : bool) (reg : Registry.t) =
   if pos > 0 && tokens.(pos - 1) <> Newline && not after_reference
   then None
   else
@@ -35,15 +35,22 @@ let parse_block (tokens : Lexer.token array) (pos : int)
               (* +1: skip space *)
               let line_tokens, consumed = gather_line tokens (pos + l + 1) in
               let content = Parser.parse_inlines reg line_tokens in
-              Some (HeadingNode (l, content), l + 1 + consumed)
+              Some
+                ( HeadingNode
+                    ( l,
+                      content,
+                      Heading_labels.heading_of_array reg.heading_position ),
+                  l + 1 + consumed )
           | _ -> None)
     | _ -> None
 
 let render_html reg id = function
-  | HeadingNode (level, children) ->
+  | HeadingNode (level, children, _) ->
       let html =
         String.concat "" (List.map (Registry.render_html reg None) children)
       in
+      reg.update_toc html;
+      (* Add title to TOC. Needs the rendered html but not the heading tag. *)
       Some (Printf.sprintf "<h%d%s>%s</h%d>" level id html level)
   | _ -> None
 

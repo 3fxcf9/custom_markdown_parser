@@ -40,7 +40,7 @@ type node =
   | CodeInlineNode of string
   | EnvironmentNode of string * node list option * node list
   | SidenoteNode of node list
-  | HeadingNode of int * node list
+  | HeadingNode of int * node list * string
   | HighlightNode of node list
   | HRuleNode of hr_kind
   | ItalicNode of node list
@@ -78,7 +78,7 @@ let rec string_of_node node =
         (string_of_nodes opt_nodes)
         (string_of_nodes content)
   | SidenoteNode lst -> Printf.sprintf "[SIDE:%s]" (string_of_nodes lst)
-  | HeadingNode (level, lst) ->
+  | HeadingNode (level, lst, _) ->
       Printf.sprintf "[HEAD%d:%s]" level (string_of_nodes lst)
   | HighlightNode lst -> Printf.sprintf "[HILITE:%s]" (string_of_nodes lst)
   | HRuleNode _ -> "[HR]"

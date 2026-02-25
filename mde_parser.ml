@@ -13,9 +13,20 @@
 
     Returns a tuple [(html, metadata)] where [html] is the rendered string and
     [metadata] is the YAML block found in the document. *)
-let parse_mde ?(figures = Hashtbl.create 0) (mde : string) =
+let parse_mde ?(toc = false) ?(figures = Hashtbl.create 0) (mde : string) =
   let reg = Config.build_registry () in
   reg.figures <- figures;
   let tokens = Lexer.tokenize mde |> Array.of_list in
   let ast = Parser.parse reg tokens in
-  (Registry.render_document reg ast, reg.metadata)
+  let html = Registry.render_document reg ast in
+
+  if toc
+  then
+    let _, _, toc_html =
+      List.fold_left
+        (fun (first, last_level, html) f -> f first last_level html)
+        (true, 2, "<ol class=\"toc\">")
+        reg.toc_setters
+    in
+    (toc_html ^ "</li></ol>" ^ html, reg.metadata)
+  else (html, reg.metadata)

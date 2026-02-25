@@ -25,7 +25,7 @@ let is_blank_tokens (tokens : Lexer.token array) : bool =
 let get_tag node reg =
   let heading_tag = Heading_labels.heading_of_array reg.heading_position in
   match node with
-  | HeadingNode (_l, _) -> Some heading_tag
+  | HeadingNode (_l, _, _) -> Some heading_tag
   | EnvironmentNode (name, _, _) ->
       let environment_count =
         match Hashtbl.find_opt reg.environment_count name with
@@ -42,7 +42,7 @@ let get_tag node reg =
     environments. *)
 let update_position node reg =
   match node with
-  | HeadingNode (l, _) ->
+  | HeadingNode (l, _, _) ->
       Hashtbl.clear reg.environment_count;
       reg.heading_position.(l) <- reg.heading_position.(l) + 1;
       if l < 6 then Array.fill reg.heading_position (l + 1) (6 - l) 0
