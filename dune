@@ -34,7 +34,8 @@
   Reference_feature
   Reference_tag_feature
   Strikethrough_feature
-  Underline_feature) ;; list ALL library modules here
+  Underline_feature)
+ ;; list ALL library modules here
  (wrapped false)
  (modules_without_implementation feature)
  (libraries yaml))
