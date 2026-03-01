@@ -28,7 +28,4 @@ let parse_mde ?(figures = Hashtbl.create 0) (mde : string) :
       reg.toc_setters
   in
   let toc_html = toc_html ^ "</li></ol>" in
-  let toc_html =
-    Printf.sprintf "<nav class=\"toc-wrapper\">%s</nav>" toc_html
-  in
   (html, toc_html, reg.metadata)
