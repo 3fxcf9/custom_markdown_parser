@@ -1,7 +1,7 @@
 open Lexer
 open Ast
 
-let parse_block (tokens : Lexer.token array) (pos : int)
+let parse_inline (tokens : Lexer.token array) (pos : int)
     (_after_reference : bool) _reg =
   if pos >= Array.length tokens
   then None
@@ -20,9 +20,7 @@ let parse_block (tokens : Lexer.token array) (pos : int)
                     (fun acc t ->
                       acc
                       ^
-                      match Lexer.token_to_literal t with
-                      | " " -> "-"
-                      | e -> e)
+                      match Lexer.token_to_literal t with " " -> "-" | e -> e)
                     "" inner
                 in
                 Some (ReferenceTagNode content, i - pos + 1)
@@ -31,6 +29,14 @@ let parse_block (tokens : Lexer.token array) (pos : int)
         find_close (pos + 1)
     | _ -> None
 
-let parse_inline = parse_block
+let parse_block (tokens : Lexer.token array) (pos : int)
+    (_after_reference : bool) _reg =
+  if pos <= 0
+  then None
+  else
+    match tokens.(pos - 1) with
+    | Newline | Indent _ -> parse_inline tokens pos _after_reference _reg
+    | _ -> None
+
 let render_html _ _ _ = None
 let render_tex _ _ _ = None

@@ -8,6 +8,9 @@ An extensible OCaml parser for a Markdown-inspired markup language. This project
 * **HTML and TeX**: Designed for HTML and TeX rendering (TeX support in progress).
 * **Specific syntax**: Supports metadata (YAML), environments (theorems, proofs, …), and standard Markdown styling.
 
+> [!NOTE]
+> View [demo.mde](demo.mde).
+
 ---
 
 ## Usage
