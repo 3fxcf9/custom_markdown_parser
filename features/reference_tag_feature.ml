@@ -20,7 +20,9 @@ let parse_inline (tokens : Lexer.token array) (pos : int)
                     (fun acc t ->
                       acc
                       ^
-                      match Lexer.token_to_literal t with " " -> "-" | e -> e)
+                      match Lexer.token_to_literal t with
+                      | " " -> "-"
+                      | e -> e)
                     "" inner
                 in
                 Some (ReferenceTagNode content, i - pos + 1)

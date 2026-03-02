@@ -29,7 +29,7 @@ let parse_inline (tokens : Lexer.token array) (pos : int)
 let render_html reg id = function
   | UnderlineNode children ->
       Some
-        (Printf.sprintf "<ul%s>%s</ul>" id
+        (Printf.sprintf "<u%s>%s</u>" id
            (String.concat ""
               (List.map (Registry.render_html reg None) children)))
   | _ -> None
