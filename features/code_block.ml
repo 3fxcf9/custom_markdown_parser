@@ -45,10 +45,10 @@ let parse_inline _ _ _ _ = None
 let render_html _reg id = function
   | CodeBlockNode (Some lang, content) ->
       Some
-        (Printf.sprintf "<pre><code%s class=\"language-%s\">%s</code></div>" id
+        (Printf.sprintf "<pre><code%s class=\"language-%s\">%s</code></pre>" id
            lang content)
   | CodeBlockNode (None, content) ->
-      Some (Printf.sprintf "<pre><code%s>%s</code></div>" id content)
+      Some (Printf.sprintf "<pre><code%s>%s</code></pre>" id content)
   | _ -> None
 
 let render_tex _reg _id = function

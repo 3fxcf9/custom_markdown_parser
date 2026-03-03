@@ -2,7 +2,10 @@
 
 - `footnote`
 - `numbered compact list`
-- `recall` environment
+- environments
+  - `recall`
+  - `dimmed`
+- tables
 
 # DOING
 
@@ -34,6 +37,8 @@
 
 # FIXES
 
+- disallow newlines in `reference_tag`
 - common base for feature (with fixes for math, code…)
 
 # IDEAS
+

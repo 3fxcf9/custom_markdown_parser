@@ -16,6 +16,7 @@ let allowed_envs =
     "rem";
     "eg";
     "exercise";
+    "recall";
     "fold";
     "quote";
     "fig";
@@ -23,6 +24,7 @@ let allowed_envs =
     "rfig";
     "offprog";
     "callout";
+    "dimmed";
   ]
 
 (* gather tokens for a single line (including trailing Newline if present) *)
@@ -65,10 +67,10 @@ let parse_env_open_line tokens pos reg =
                 else
                   match tokens.(i) with
                   | Newline ->
-                      (i + 1, Array.sub tokens (pos + 2) (i - (pos + 2)))
+                      (i + 1, Array.sub tokens (pos + 3) (i - (pos + 2)))
                   | _ -> loop (i + 1)
               in
-              let next_pos, title_tokens = loop (pos + 2) in
+              let next_pos, title_tokens = loop (pos + 3) in
               let title =
                 if Array.length title_tokens > 0
                 then Some (Parser.parse_inlines reg title_tokens)
@@ -190,12 +192,10 @@ let render_html reg id = function
         let env_name = lookup translate_shortcut env in
         let env_name_fr = lookup translate_shortcut_fr env in
         let title_section =
-          match env with
-          | "callout" ->
-              Printf.sprintf
-                "<div class=\"environment-title\">Callout — %s</div>"
-                (String.capitalize_ascii env_name)
-          | e
+          match (env, title_html_opt) with
+          | "callout", Some t ->
+              Printf.sprintf "<div class=\"environment-title\">%s</div>" t
+          | e, _
             when List.mem e
                    [
                      "thm";
@@ -207,6 +207,7 @@ let render_html reg id = function
                      "defprop";
                      "method";
                      "notation";
+                     "recall";
                    ] -> (
               match title_html_opt with
               | Some t ->
@@ -228,6 +229,8 @@ let render_html reg id = function
         | "offprog" ->
             Printf.sprintf "<div%s class=\"off-program\">%s</div>" id
               content_html
+        | "dimmed" ->
+            Printf.sprintf "<div%s class=\"dimmed\">%s</div>" id content_html
         | "fig" -> render_figure ""
         | "lfig" -> render_figure "float-left"
         | "rfig" -> render_figure "float-right"
