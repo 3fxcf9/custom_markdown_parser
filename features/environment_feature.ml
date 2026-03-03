@@ -207,7 +207,6 @@ let render_html reg id = function
                      "defprop";
                      "method";
                      "notation";
-                     "recall";
                    ] -> (
               match title_html_opt with
               | Some t ->
@@ -219,6 +218,8 @@ let render_html reg id = function
               | None ->
                   Printf.sprintf "<div class=\"environment-title\">%s</div>"
                     (String.capitalize_ascii env_name_fr))
+          | _, Some t ->
+              Printf.sprintf "<div class=\"environment-title\">%s</div>" t
           | _ -> ""
         in
         Printf.sprintf "<div%s class=\"environment environment-%s\">%s%s</div>"
