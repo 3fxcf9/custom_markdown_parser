@@ -50,6 +50,14 @@ let render_html reg id = function
         String.concat "" (List.map (Registry.render_html reg None) children)
       in
       reg.update_toc html;
+
+      (* Add metadata.page.title *)
+      if level = 1
+      then
+        reg.metadata <-
+          Yaml_utils.merge_yaml_options reg.metadata
+            (Some (`O [ ("page", `O [ ("title", `String html) ]) ]));
+
       (* Add title to TOC. Needs the rendered html but not the heading tag. *)
       Some (Printf.sprintf "<h%d%s>%s</h%d>" level id html level)
   | _ -> None

@@ -23,6 +23,7 @@ let translate_environment_names =
     ("lfig", "figure");
     ("rfig", "figure");
     ("callout", "encadré");
+    ("recall", "rappel");
   ]
 
 (** [environment_display_name name] Translates internal environment tags to

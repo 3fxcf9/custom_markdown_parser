@@ -11,8 +11,9 @@
      {- [mde] : the raw input string to be parsed. }
     }
 
-    Returns a tuple [(html, metadata)] where [html] is the rendered string and
-    [metadata] is the YAML block found in the document. *)
+    Returns a tuple [(html, toc_html, metadata)] where [html] is the rendered
+    string, [toc_html] the generated table of contents, and [metadata] is the
+    YAML block found in the document ([Yaml.value option]). *)
 let parse_mde ?(figures = Hashtbl.create 0) (mde : string) :
     string * string * Yaml.value option =
   let reg = Config.build_registry () in

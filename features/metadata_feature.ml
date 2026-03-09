@@ -21,7 +21,9 @@ let parse_block (tokens : Lexer.token array) (pos : int)
                 done;
                 let content = Buffer.contents buf |> String.trim in
                 (match Yaml.of_string content with
-                | Ok v -> reg.metadata <- Some v
+                | Ok v ->
+                    reg.metadata <-
+                      Yaml_utils.merge_yaml_options reg.metadata (Some v)
                 | Error (`Msg err) -> failwith ("Parse error: " ^ err));
                 Some (EmptyNode, i + 3 - pos)
             | _ -> find_close (i + 1)

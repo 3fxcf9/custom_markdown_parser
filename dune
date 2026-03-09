@@ -12,6 +12,7 @@
   Registry
   Heading_labels
   Roman
+  Yaml_utils
   Feature
   Bold_feature
   Code_block
