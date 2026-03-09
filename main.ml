@@ -8,6 +8,7 @@ let pprint_yaml_opt (ov : Yaml.value option) =
 
 let () =
   let content = In_channel.with_open_bin "test.mde" In_channel.input_all in
-  let html, _, meta = Mde_parser.parse_mde content in
+  let html, toc, meta = Mde_parser.parse_mde content in
   pprint_yaml_opt meta;
-  print_endline html
+  print_newline ();
+  print_endline (toc ^ html)

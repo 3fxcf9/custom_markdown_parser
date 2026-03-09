@@ -51,12 +51,13 @@ let render_html reg id = function
       in
       reg.update_toc html;
 
-      (* Add metadata.page.title *)
+      (* Add metadata.card.title *)
       if level = 1
       then
         reg.metadata <-
-          Yaml_utils.merge_yaml_options reg.metadata
-            (Some (`O [ ("card", `O [ ("title", `String html) ]) ]));
+          Yaml_utils.merge_yaml_options
+            (Some (`O [ ("card", `O [ ("title", `String html) ]) ]))
+            reg.metadata;
 
       (* Add title to TOC. Needs the rendered html but not the heading tag. *)
       Some (Printf.sprintf "<h%d%s>%s</h%d>" level id html level)
