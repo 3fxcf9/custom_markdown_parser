@@ -26,6 +26,7 @@ type token =
   | Rbracket
   | Lcurly
   | Rcurly
+  | Pipe
   | Indent of int
   | Text of string
 
@@ -59,6 +60,7 @@ let debug_token token =
   | Rbracket -> "[DELIM:]]"
   | Lcurly -> "[{]"
   | Rcurly -> "[}]"
+  | Pipe -> "[|]"
   | Indent level -> Printf.sprintf "[INDENT:%d]" level
   | Text s -> Printf.sprintf "[TEXT:%s]" s
 
@@ -91,6 +93,7 @@ let token_to_literal token =
   | Rbracket -> "]"
   | Lcurly -> "{"
   | Rcurly -> "}"
+  | Pipe -> "|"
   | Indent level -> Bytes.make level ' ' |> Bytes.to_string
   | Text s -> s
 
@@ -129,6 +132,7 @@ let tokenize input =
     | ']' -> Some Rbracket
     | '{' -> Some Lcurly
     | '}' -> Some Rcurly
+    | '|' -> Some Pipe
     | _ -> None
   in
 
@@ -160,7 +164,11 @@ let tokenize input =
       then (
         incr indent_level;
         process_char (i + 1))
-      else if i + 1 < input_len && ch = '/' && input.[i + 1] = '/'
+      else if
+        i + 1 < input_len
+        && ch = '/'
+        && input.[i + 1] = '/'
+        && (i = 0 || input.[i - 1] = ' ' || input.[i - 1] = '\n')
       then (
         indent_level := 0;
         skip_comment (i + 2) |> process_char)

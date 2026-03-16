@@ -35,6 +35,7 @@ let build_registry () =
       (module Math_inline);
       (module Math_display);
       (module List_feature);
+      (module Table_feature);
       (* IMPORTANT: Compact list must be parsed before List_feature *)
       (module Compact_list_feature);
       (module Environment_feature);

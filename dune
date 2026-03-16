@@ -21,13 +21,13 @@
   Environment_feature
   Sidenote_feature
   Heading_feature
-  Heading_feature
   Highlight_feature
   Hrule_feature
   Image_feature
   Italic_feature
   Link_feature
   List_feature
+  Table_feature
   Math_display
   Math_inline
   Metadata_feature

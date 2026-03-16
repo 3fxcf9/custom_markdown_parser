@@ -55,6 +55,7 @@ type node =
   | ImageNode of string
   | ReferenceNode of string
   | ReferenceTagNode of string
+  | TableNode of node list list * node list list list
 
 (** {1:internal Internal Utilities}
     The following functions are used for debugging and are not required for
@@ -97,6 +98,17 @@ let rec string_of_node node =
   | ImageNode s -> Printf.sprintf "[IMAGE:%s]" s
   | ReferenceNode s -> Printf.sprintf "[REF:%s]" s
   | ReferenceTagNode s -> Printf.sprintf "[REF-TAG:%s]" s
+  | TableNode (headers, rows) ->
+      let header_str =
+        List.map string_of_nodes headers |> String.concat " | "
+      in
+      let row_strs =
+        List.map
+          (fun row -> List.map string_of_nodes row |> String.concat " | ")
+          rows
+      in
+      Printf.sprintf "[TABLE: headers: %s; rows: %s]" header_str
+        (String.concat " // " row_strs)
 
 and string_of_nodes lst = String.concat " " (List.map string_of_node lst)
 
