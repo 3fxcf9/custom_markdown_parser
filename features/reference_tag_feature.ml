@@ -33,8 +33,8 @@ let parse_inline (tokens : Lexer.token array) (pos : int)
 
 let parse_block (tokens : Lexer.token array) (pos : int)
     (_after_reference : bool) _reg =
-  if pos <= 0
-  then None
+  if pos = 0
+  then parse_inline tokens pos _after_reference _reg
   else
     match tokens.(pos - 1) with
     | Newline | Indent _ -> parse_inline tokens pos _after_reference _reg

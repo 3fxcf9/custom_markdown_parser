@@ -182,10 +182,7 @@ let render_html reg id = function
       List.iter
         (fun item_children ->
           Buffer.add_string buf "<li>";
-          List.iter
-            (fun child ->
-              Buffer.add_string buf (Registry.render_html reg None child))
-            item_children;
+          Buffer.add_string buf (Registry.render_document reg item_children);
           Buffer.add_string buf "</li>\n")
         items;
       Buffer.add_string buf (Printf.sprintf "</%s>" tag);

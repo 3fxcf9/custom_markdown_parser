@@ -148,10 +148,7 @@ let render_html reg id = function
         | Some t ->
             Some (String.concat "" (List.map (Registry.render_html reg None) t))
       in
-      let content_html =
-        String.concat ""
-          (List.map (Registry.render_html reg None) content_nodes)
-      in
+      let content_html = Registry.render_document reg content_nodes in
       let render_figure class_name =
         match title_html_opt with
         | Some t ->
