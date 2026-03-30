@@ -1,7 +1,7 @@
 (** Abstract Syntax Tree nodes and utilities. *)
 
 type hr_kind = Compact | Solid | Dashed | Sawteeth
-type list_type = Ordered | Dash | Star | Plus | Compact
+type list_type = Ordered | Dash | Star | Plus | Compact | OrderedCompact
 
 let translate_environment_names =
   [

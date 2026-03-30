@@ -20,7 +20,6 @@ let parse_mde ?(figures = Hashtbl.create 0) (mde : string) :
   reg.figures <- figures;
   let tokens = Lexer.tokenize mde |> Array.of_list in
   let ast = Parser.parse reg tokens in
-  Ast.debug_nodes ast;
   let html = Registry.render_document reg ast in
 
   let _, _, toc_html =

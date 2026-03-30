@@ -166,17 +166,23 @@ let parse_block (tokens : Lexer.token array) (pos : int)
 
 let render_html reg id = function
   | ListNode (ltype, start_num, items) ->
-      let tag = match ltype with Ordered -> "ol" | _ -> "ul" in
-      let args =
+      let tag =
+        match ltype with Ordered | OrderedCompact -> "ol" | _ -> "ul"
+      in
+      let start_attr =
+        if (ltype = Ordered || ltype = OrderedCompact) && start_num <> 1
+        then Printf.sprintf " start=\"%d\"" start_num
+        else ""
+      in
+      let class_attr =
         match ltype with
-        | Ordered when start_num <> 1 ->
-            Printf.sprintf " start=\"%d\"" start_num
         | Dash -> " class=\"list-dash\""
         | Star -> " class=\"list-star\""
         | Plus -> " class=\"list-plus\""
-        | Compact -> " class=\"list-compact\""
+        | Compact | OrderedCompact -> " class=\"list-compact\""
         | _ -> ""
       in
+      let args = start_attr ^ class_attr in
       let buf = Buffer.create 128 in
       Buffer.add_string buf (Printf.sprintf "<%s%s%s>\n" tag args id);
       List.iter
@@ -191,7 +197,11 @@ let render_html reg id = function
 
 let render_tex reg _id = function
   | ListNode (ltype, _start, items) ->
-      let env = match ltype with Ordered -> "enumerate" | _ -> "itemize" in
+      let env =
+        match ltype with
+        | Ordered | OrderedCompact -> "enumerate"
+        | _ -> "itemize"
+      in
       let buf = Buffer.create 256 in
       Buffer.add_string buf (Printf.sprintf "\n\\\\begin{%s}\n" env);
       List.iter

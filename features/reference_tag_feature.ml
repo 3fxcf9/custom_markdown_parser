@@ -13,6 +13,7 @@ let parse_inline (tokens : Lexer.token array) (pos : int)
           then None
           else
             match tokens.(i) with
+            | Newline -> None
             | Rangle ->
                 let inner = Array.sub tokens (pos + 1) (i - pos - 1) in
                 let content =
